@@ -17,7 +17,7 @@
 
 **Q: Database các em dùng gì? Giải thích cấu trúc chính?**
 
-> PostgreSQL 15. Các bảng chính: `users`, `products`, `categories`, `product_sizes`, `toppings`, `orders`, `order_items`, `job_postings`, `job_applications`.
+> PostgreSQL 15. Các bảng chính: `users`, `products`, `categories`, `product_sizes`, `toppings`, `orders`, `order_items`.
 > Primary key dùng UUID để tránh sequential ID guessing.
 > `order_items` lưu snapshot (tên sản phẩm, giá tại thời điểm mua) vì sản phẩm có thể bị sửa/xóa sau này — đây là kỹ thuật phổ biến trong thương mại điện tử.
 
@@ -63,7 +63,7 @@
 
 **Q: Caching hoạt động thế nào trong project?**
 
-> Dùng Spring Cache với Redis làm backend:
+> Dùng Spring Cache. Mặc định project chạy `spring.cache.type=simple`; nếu cấu hình `spring.cache.type=redis` thì dùng Redis backend:
 > - `@Cacheable("categories")` trong `CategoryService.getAllCategories()` — giảm tải DB khi menu hiển thị.
 > - `@Cacheable("products")` trong `ProductService` — cache kết quả tìm kiếm sản phẩm.
 > - `@CacheEvict` được gọi khi save/delete category hoặc product.
@@ -88,7 +88,7 @@
 
 **Q: ProductCode được tạo ra như thế nào?**
 > `DataSeeder` dùng counter tăng dần: `PRD-00001`, `PRD-00002`, ...
-> Với sản phẩm mới tạo qua UI, `CatalogMetadataBackfillRunner` tự động gán `displayCode` tuần tự cho bất kỳ entity nào chưa có code (products, categories, jobs).
+> Với sản phẩm mới tạo qua UI, `ProductService.saveProduct()` tự động gán `PRD-00001`, `PRD-00002`, ... nếu sản phẩm chưa có code. `CatalogMetadataBackfillRunner` backfill code cho products/categories cũ chưa có code.
 
 **Q: Tại sao cần Redis cache cho categories?**
 > Menu phía customer gọi `getAllCategories()` ở mọi request. Cache giúp tránh query DB lặp đi lặp lại.
@@ -124,19 +124,13 @@
 
 ---
 
-## 📦 Câu hỏi cho Quỳnh — Recruitment, Auth, Toppings, Dashboard
+## 📦 Câu hỏi cho Quỳnh — Auth, Users, Toppings, Dashboard
 
-**Q: Job Application tracking code khác Order tracking code không?**
-> Có. Order: `ORD-XXXXXX`. Job application: `CV-XXXXXXXX` (8 ký tự).
-> Cùng endpoint `/tracking/search` nhưng hệ thống tìm Order trước, nếu không thấy mới tìm JobApplication.
+**Q: Admin quản lý user như thế nào?**
+> Trang `/admin/users` hiển thị danh sách user có phân trang và tìm kiếm. Admin có thể bật/tắt trạng thái tài khoản qua `POST /admin/users/{id}/toggle` hoặc reset password về `123456` qua `POST /admin/users/{id}/reset-password`.
 
-**Q: Trạng thái đơn ứng tuyển có những bước nào?**
-> `NEW → REVIEWED → INTERVIEWING → HIRED` hoặc `REJECTED`.
-> Admin cập nhật thủ công qua `POST /admin/recruitment/{id}/status`.
-
-**Q: Upload CV xử lý ra sao?**
-> Tương tự upload ảnh sản phẩm: `MultipartFile` lưu vào `uploads/cvs/`, chỉ chấp nhận file PDF.
-> Đường dẫn file được lưu vào `job_applications.cv_file_path`.
+**Q: Người dùng tự cập nhật thông tin cá nhân ở đâu?**
+> Người dùng đã đăng nhập vào `/profile`, chỉnh `fullName`, `email`, `phone`. `ProfileController` lấy user hiện tại từ `Authentication` và lưu lại qua `UserService`.
 
 **Q: Login redirect hoạt động thế nào?**
 > `CustomAuthenticationSuccessHandler` kiểm tra role sau khi đăng nhập:
@@ -156,11 +150,11 @@
 > Kết quả dùng cho Chart.js trên dashboard và history.
 
 **Q: DataSeeder làm gì khi app khởi động?**
-> Xóa sạch theo thứ tự FK-safe: `order_items → orders → job_applications → job_postings → users → product_sizes → products → categories`.
-> Seed lại toàn bộ với ID chuẩn (`CAT-00001`, `PRD-00001`, `ORD-000001`, `JOB-000001`).
-> `CatalogMetadataBackfillRunner` chạy sau seeder, gán `displayCode` tuần tự cho bất kỳ entity nào thiếu code.
+> Xóa sạch theo thứ tự FK-safe: `order_items → orders → users → product_sizes → products → categories`.
+> Seed lại 4 category, 50 product, 30 user thường, 1 admin, lịch sử 10 tháng và một số đơn active.
+> `CatalogMetadataBackfillRunner` chạy sau seeder, gán code tuần tự cho category/product nào còn thiếu code.
 > Evict toàn bộ Redis cache sau khi seed xong để tránh dữ liệu stale.
 
 **Q: Tại sao dùng UUID thay vì auto-increment?**
 > UUID globally unique, tránh sequential ID guessing (bảo mật hơn khi ID xuất hiện trong URL).
-> Tuy nhiên để dễ nhìn, mỗi entity có thêm `displayCode` (`ORD-000001`, `PRD-00001`, `JOB-000001`...) dùng để hiển thị.
+> Tuy nhiên để dễ nhìn, các entity chính có thêm mã hiển thị như `ORD-000001`, `PRD-00001`, `CAT-00001`.

@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Order extends BaseEntity {
 
-    // ─── PDF Schema Fields ───────────────────────────────────────────
+    // PDF schema fields
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -44,7 +44,7 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    // ─── Legacy Fields (for existing UI / Controllers) ──────────────
+    // Legacy fields for existing UI/controllers
 
     @Column(name = "customer_name")
     private String customerName;
@@ -71,7 +71,7 @@ public class Order extends BaseEntity {
     @Column(name = "order_type")
     private String orderType;
 
-    // ─── Convenience Accessors ──────────────────────────────────────
+    // Convenience accessors
 
     /** Alias for legacy code that calls getOrderDetails() */
     @Transient

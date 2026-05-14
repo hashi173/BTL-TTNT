@@ -15,7 +15,7 @@
 
 Hệ thống AI gồm 5 thành phần:
 
-1. RecommendationService    → Gợiý sản phẩm cho user
+1. RecommendationService    → Gợi ý sản phẩm cho user
 2. TextSimilarityService    → So sánh văn bản (TF-IDF)
 3. NaiveBayesClassifier     → Phân loại sản phẩm
 4. RecommendationEvaluator  → Đánh giá hiệu suất
@@ -24,13 +24,13 @@ Hệ thống AI gồm 5 thành phần:
 
 ---
 
-## 2. RecommendationService — Gợiý sản phẩm
+## 2. RecommendationService — Gợi ý sản phẩm
 
 **File:** `src/main/java/com/coffeeshop/service/RecommendationService.java`
 
 ### 2.1 Nó làm gì?
 
-Khi user mở trang Home, hệ thống gợiý 6 sản phẩm phù hợp với sở thích.
+Khi user mở trang Home, hệ thống gợi ý 6 sản phẩm phù hợp với sở thích.
 
 ### 2.2 Code ở đâu?
 
@@ -56,7 +56,7 @@ Ví dụ:
            = 4 / (√5 × √5) = 4/5 = 0.8  → Rất giống!
   sim(A,C) = 0 / (√5 × √9) = 0          → Hoàn toàn khác!
 
-→ Hệ thống sẽ gợiý sản phẩm mà User B thích cho User A.
+→ Hệ thống sẽ gợi ý sản phẩm mà User B thích cho User A.
 ```
 
 ### 2.4 Công thức: Kết hợp trọng số
@@ -78,7 +78,7 @@ Ví dụ:
     RB_score = 0.8 (bán rất chạy)
     finalScore = 0.6 × 0.3 + 0.4 × 0.8 = 0.50
 
-  → "Cappuccino" được gợiý trước vì score cao hơn.
+  → "Cappuccino" được gợi ý trước vì score cao hơn.
 ```
 
 ---
@@ -202,7 +202,7 @@ cos(Query, Prod B) = 0.00  → không liên quan
 
 ### 5.1 Nó làm gì?
 
-Đo lường hệ thống gợiý "đúng" bao nhiêu % bằng cách: ẩn 1 sản phẩm user đã mua, thử xem hệ thống có gợiý lại được không.
+Đo lường hệ thống gợi ý "đúng" bao nhiêu % bằng cách: ẩn 1 sản phẩm user đã mua, thử xem hệ thống có gợi ý lại được không.
 
 ### 5.2 Code ở đâu?
 
@@ -223,9 +223,9 @@ User alice đã mua: [Cafe Latte ×3, Espresso ×2, Cappuccino ×1]
 
 Bước 1: Ẩn "Cafe Latte" (mua nhiều nhất) → test item
 Bước 2: Dùng [Espresso, Cappuccino] làm lịch sử
-Bước 3: Gợiý top-6 sản phẩm từ hệ thống
+Bước 3: Gợi ý top-6 sản phẩm từ hệ thống
 
-  Kết quả gợiý: [Mocha, Americano, Flat White, Cafe Latte, Cold Brew, ...]
+  Kết quả gợi ý: [Mocha, Americano, Flat White, Cafe Latte, Cold Brew, ...]
                                     ↑
                               Cafe Latte ở vị trí 4 → HIT!
 
@@ -237,20 +237,20 @@ Bước 3: Gợiý top-6 sản phẩm từ hệ thống
 ### 5.4 Các chỉ số đánh giá
 
 ```
-Precision@K: Trong K gợiý, bao nhiêu % đúng?
-  → Cao = gợiý chính xác, ít "rác"
+Precision@K: Trong K gợi ý, bao nhiêu % đúng?
+  → Cao = gợi ý chính xác, ít "rác"
 
-Recall@K: Trong tất cả sản phẩm liên quan, bao nhiêu % được gợiý?
+Recall@K: Trong tất cả sản phẩm liên quan, bao nhiêu % được gợi ý?
   → Cao = không bỏ sót
 
 F1 = 2 × P × R / (P + R): Cân bằng P và R
   → F1 cao = cả P và R đều tốt
 
-Hit Rate: Bao nhiêu % user có ≥1 gợiý đúng?
-  → Quan trọng nhất: user chỉ cần 1 gợiý đúng là hài lòng
+Hit Rate: Bao nhiêu % user có ≥1 gợi ý đúng?
+  → Quan trọng nhất: user chỉ cần 1 gợi ý đúng là hài lòng
 
-MAP: Có xét thứ tự (gợiý đúng ở vị trí 1 tốt hơn vị trí 6)
-  → MAP cao = gợiý đúng + đúng ngay đầu
+MAP: Có xét thứ tự (gợi ý đúng ở vị trí 1 tốt hơn vị trí 6)
+  → MAP cao = gợi ý đúng + đúng ngay đầu
 ```
 
 ---
@@ -262,8 +262,8 @@ MAP: Có xét thứ tự (gợiý đúng ở vị trí 1 tốt hơn vị trí 6)
 ### 6.1 Nó làm gì?
 
 Tạo 2 baseline đơn giản để so sánh với hệ thống hybrid:
-- **Random:** Gợiý ngẫu nhiên → đo "tệ nhất có thể"
-- **Popularity:** Gợiý sản phẩm bán chạy nhất → đo "baseline đơn giản"
+- **Random:** Gợi ý ngẫu nhiên → đo "tệ nhất có thể"
+- **Popularity:** Gợi ý sản phẩm bán chạy nhất → đo "baseline đơn giản"
 
 ### 6.2 Tại sao cần baseline?
 
@@ -289,7 +289,7 @@ Nếu hybrid ≈ Popularity:
 |----------|----------|----------|
 | Products | 50 | 15 Coffee + 15 Tea + 10 Smoothie + 10 Juice |
 | Users | 31 | 1 admin + 30 users (4 clusters) |
-| Orders | ~1500/tháng × 10 tháng | Lịch sử mua hàng |
+| Orders | ~150-210/tháng × 10 tháng | Lịch sử mua hàng |
 
 ### 7.2 Preference Clusters
 
@@ -322,7 +322,7 @@ Hiển thị:
 ## 9. Thứ tự code khi cần sửa
 
 ```
-Muốn sửa thuật toán gợiý?  → RecommendationService.java
+Muốn sửa thuật toán gợi ý?  → RecommendationService.java
 Muốn sửa chatbot?           → Đã xóa
 Muốn thêm sản phẩm mẫu?    → DataSeeder.java → seedProducts()
 Muốn thêm user mẫu?        → DataSeeder.java → seedUsers()

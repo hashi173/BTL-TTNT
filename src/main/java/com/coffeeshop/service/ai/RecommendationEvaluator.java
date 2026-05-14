@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * ═══════════════════════════════════════════════════════════════
  * PHƯƠNG PHÁP: Leave-One-Out Cross-Validation
  * ═══════════════════════════════════════════════════════════════
- * Với mỗi user có ≥2 sản phẩm: ẩn 1, gợiý bằng phần còn lại,
+ * Với mỗi user có ≥2 sản phẩm: ẩn 1, gợi ý bằng phần còn lại,
  * kiểm tra test item có trong top-K không.
  */
 @Service

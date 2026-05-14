@@ -4,7 +4,7 @@
 
 ---
 
-## Demo 1: Gợiý sản phẩm cá nhân hóa
+## Demo 1: Gợi ý sản phẩm cá nhân hóa
 
 ### Bước thực hiện
 1. Mở trình duyệt → `http://localhost:8080`
@@ -22,7 +22,7 @@ bob (giống alice): Cafe Latte ×12, Espresso ×10, Mocha ×5, ...
 
 Cosine Similarity(alice, bob) = 0.85 → rất giống!
 bob đã mua Mocha mà alice chưa mua
-→ Hệ thống gợiý Mocha cho alice (CF score = 0.85 × 0.7 = 0.60)
+→ Hệ thống gợi ý Mocha cho alice (CF score = 0.85 × 0.7 = 0.60)
 
 Mocha cũng bán chạy (RB score = 0.5)
 → finalScore = 0.6 × 0.60 + 0.4 × 0.50 = 0.56
@@ -47,7 +47,7 @@ kate đã mua: Matcha Latte ×14, Jasmine Tea ×10, Oolong ×8, ...
 Cosine Similarity(alice, kate) = 0.05 → rất khác!
 Cosine Similarity(kate, leo) = 0.82 → rất giống! (leo cũng là Tea lover)
 
-→ Hệ thống gợiý sản phẩm mà leo thích cho kate
+→ Hệ thống gợi ý sản phẩm mà leo thích cho kate
 → Kết quả: toàn bộ là Tea
 ```
 
@@ -73,7 +73,7 @@ Hệ thống kiểm tra: isNewUser = true
 → Chạy Rule-based: lấy sản phẩm bán chạy nhất
 
 Best sellers: Cafe Latte (bán 500 ly), Espresso (400 ly), ...
-→ Gợiý 6 sản phẩm bán chạy nhất
+→ Gợi ý 6 sản phẩm bán chạy nhất
 ```
 
 ---
@@ -90,7 +90,7 @@ Best sellers: Cafe Latte (bán 500 ly), Espresso (400 ly), ...
 - **Baseline comparison:** Hybrid > Popularity > Random
 - **Ablation study:** Trọng số 0.6/0.4 cho kết quả tốt nhất
 - **F1 vs K:** F1 cao nhất ở K=5 hoặc K=6
-- **Confusion Matrix:** Naive Bayes phân loại đúng大部分 sản phẩm
+- **Confusion Matrix:** Naive Bayes phân loại đúng phần lớn sản phẩm
 
 ### Giải thích thuật toán
 ```
@@ -102,7 +102,7 @@ Baseline Comparison:
   Random:            F1 = 0.05, Hit Rate = 0.10
 
 → Hybrid > CF-Only > RB-Only > Popularity > Random
-→ Kết hợp CF + RB tốt hơn dùng单独任何一个!
+→ Kết hợp CF + RB tốt hơn dùng riêng từng cách!
 ```
 
 ---
@@ -142,16 +142,16 @@ Sai nhiều nhất: Coffee bị nhầm sang Tea (1 sản phẩm)
 1. Xem biểu đồ "Precision-Recall Curve (K=1..20)"
 
 ### Kết quả mong đợi
-- Precision giảm khi K tăng (gợiý nhiều hơn → nhiều sai hơn)
-- Recall tăng khi K tăng (gợiý nhiều hơn → ít bỏ sót hơn)
+- Precision giảm khi K tăng (gợi ý nhiều hơn → nhiều sai hơn)
+- Recall tăng khi K tăng (gợi ý nhiều hơn → ít bỏ sót hơn)
 - F1 cao nhất ở K=5 hoặc K=6
 
 ### Giải thích thuật toán
 ```
-K=1:  Precision=0.30, Recall=0.15  (gợiý 1 → đúng 30%, nhưng bỏ sót 85%)
+K=1:  Precision=0.30, Recall=0.15  (gợi ý 1 → đúng 30%, nhưng bỏ sót 85%)
 K=5:  Precision=0.18, Recall=0.45  (cân bằng tốt nhất)
 K=10: Precision=0.12, Recall=0.60  (recall cao nhưng precision thấp)
-K=20: Precision=0.06, Recall=0.75  (gợiý太多, precision很低)
+K=20: Precision=0.06, Recall=0.75  (gợi ý quá nhiều, precision rất thấp)
 
 → Chọn K=6 (giữa 5 và 10) để cân bằng Precision và Recall
 ```
@@ -166,7 +166,7 @@ K=20: Precision=0.06, Recall=0.75  (gợiý太多, precision很低)
 ### Kết quả mong đợi
 - F1 cao nhất ở CF=0.6, RB=0.4 hoặc CF=0.7, RB=0.3
 - CF-only (1.0/0.0) tốt hơn RB-only (0.0/1.0)
-- Hybrid luôn tốt hơn single approach
+- Hybrid luôn tốt hơn approach riêng lẻ
 
 ### Giải thích thuật toán
 ```
@@ -182,7 +182,7 @@ CF/RB    F1      Hit Rate
 0.1/0.9  0.16    0.30    ← RB quá cao, bỏ qua CF
 
 → 0.6/0.4 là optimal. Lý do:
-  - CF giỏi捕捉 sở thích cá nhân
+  - CF giỏi nắm bắt sở thích cá nhân
   - RB giỏi xử lý cold start và sản phẩm phổ biến
   - Kết hợp = best of both worlds
 ```
@@ -199,7 +199,7 @@ Hệ thống AI của chúng tôi:
 3. ✅ So sánh với 2 baseline: Random, Popularity
 4. ✅ Ablation study: thử nhiều trọng số và K
 5. ✅ Confusion matrix cho Naive Bayes
-6. ✅ 50 sản phẩm, 30 users, 15000+ đơn hàng mẫu
+6. ✅ 50 sản phẩm, 30 users, khoảng 1.780 đơn hàng mẫu
 
 Kết quả: Hybrid (CF + RB) tốt hơn Popularity baseline 2x,
 tốt hơn Random baseline 5x.

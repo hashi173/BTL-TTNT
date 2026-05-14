@@ -64,7 +64,7 @@ Khi vào pgAdmin (port 5050), để kết nối tới Postgres trong cùng mạn
 
 ## 5. Lưu ý về Dữ liệu (Seeding)
 Mặc định trong file `docker-compose.yml`, ứng dụng chạy với profile `dev`:
-- Hệ thống sẽ tự động tạo bảng và **tự động nạp dữ liệu mẫu** (Categories, Products, Orders, Job Postings) mỗi khi khởi động.
+- Hệ thống sẽ tự động tạo bảng và **tự động nạp dữ liệu mẫu** (Categories, Products, Users, Orders) mỗi khi khởi động.
 - Nếu bạn muốn dùng bộ dữ liệu SQL thuần (SQL-only demo), hãy đổi `APP_PROFILE: prod` trong file `docker-compose.yml` và thực hiện import SQL thủ công qua pgAdmin.
 
 ---

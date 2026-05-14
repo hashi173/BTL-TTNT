@@ -20,7 +20,7 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** Admin financial history — monthly revenue with Chart.js visualization. */
+/** Admin financial history - monthly revenue with Chart.js visualization. */
 @Slf4j
 @Controller
 @RequestMapping("/admin/history")
@@ -104,7 +104,7 @@ public class AdminHistoryController {
         model.addAttribute("totalItems", totalItems);
         model.addAttribute("search", search);
 
-        // Chart data — last 12 months in chronological order
+        // Chart data - last 12 months in chronological order
         List<String> labels = new ArrayList<>();
         List<Double> revenues = new ArrayList<>();
 

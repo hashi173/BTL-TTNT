@@ -3,12 +3,14 @@ package com.coffeeshop;
 import com.coffeeshop.entity.Category;
 import com.coffeeshop.entity.Product;
 import com.coffeeshop.repository.CategoryRepository;
+import com.coffeeshop.repository.OrderItemRepository;
 import com.coffeeshop.repository.ProductRepository;
 import com.coffeeshop.service.CategoryService;
 import com.coffeeshop.service.ProductService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,26 +27,29 @@ class CatalogCodeGenerationTest {
         Category category = new Category();
         category.setName("Cà phê truyền thống");
 
+        when(categoryRepository.findByCategoryCodeIgnoreCase("CAT-00001")).thenReturn(Optional.empty());
         when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Category saved = categoryService.saveCategory(category);
 
-        assertEquals("CAT-CA-PHE-TRUYEN-THONG", saved.getCategoryCode());
+        assertEquals("CAT-00001", saved.getCategoryCode());
     }
 
     @Test
     void saveProductGeneratesReadableCodeAndKeepsSizesLinked() {
         ProductRepository productRepository = mock(ProductRepository.class);
-        ProductService productService = new ProductService(productRepository);
+        OrderItemRepository orderItemRepository = mock(OrderItemRepository.class);
+        ProductService productService = new ProductService(productRepository, orderItemRepository);
 
         Product product = new Product();
         product.setName("Trà đào cam sả");
         product.setSizes(List.of());
 
+        when(productRepository.findByProductCodeIgnoreCase("PRD-00001")).thenReturn(Optional.empty());
         when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Product saved = productService.saveProduct(product);
 
-        assertEquals("PRD-TRA-DAO-CAM-SA", saved.getProductCode());
+        assertEquals("PRD-00001", saved.getProductCode());
     }
 }

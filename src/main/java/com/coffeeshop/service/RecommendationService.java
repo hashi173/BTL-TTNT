@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Hệ thống gợiý sản phẩm kết hợp Collaborative Filtering và Rule-based.
+ * Hệ thống gợi ý sản phẩm kết hợp Collaborative Filtering và Rule-based.
  *
  * ═══════════════════════════════════════════════════════════════
  * THUẬT TOÁN: Hybrid Recommendation System
@@ -60,7 +60,7 @@ public class RecommendationService {
     private volatile long matrixLastBuilt = 0;
 
     /**
-     * Gợiý sản phẩm cho user kết hợp CF + Rule-based.
+     * Gợi ý sản phẩm cho user kết hợp CF + Rule-based.
      *
      * Quy trình:
      * 1. Đảm bảo ma trận đã được xây dựng

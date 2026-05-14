@@ -1,11 +1,11 @@
 package com.coffeeshop;
 
 import com.coffeeshop.controller.HomeController;
-import com.coffeeshop.entity.JobPosting;
-import com.coffeeshop.repository.JobPostingRepository;
 import com.coffeeshop.service.CategoryService;
 import com.coffeeshop.service.ProductService;
+import com.coffeeshop.service.RecommendationService;
 import com.coffeeshop.service.ToppingService;
+import com.coffeeshop.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,10 @@ class HomeControllerTest {
     private ToppingService toppingService;
 
     @Mock
-    private JobPostingRepository jobPostingRepository;
+    private RecommendationService recommendationService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private jakarta.servlet.http.HttpServletRequest request;
@@ -45,18 +48,19 @@ class HomeControllerTest {
     private HomeController homeController;
 
     @Test
-    void homeUsesTopThreeJobsQuery() {
-        List<JobPosting> jobs = List.of(new JobPosting(), new JobPosting(), new JobPosting());
+    void homeUsesBestSellersForAnonymousUser() {
         when(request.getSession(true)).thenReturn(session);
         when(productService.getAllProducts()).thenReturn(List.of());
         when(categoryService.getAllCategories()).thenReturn(List.of());
-        when(jobPostingRepository.findByIsActiveTrueOrderByCreatedAtDesc()).thenReturn(jobs);
+        when(recommendationService.getBestSellers()).thenReturn(List.of());
 
         ExtendedModelMap model = new ExtendedModelMap();
         String viewName = homeController.home(model, request);
 
         assertEquals("home", viewName);
-        assertEquals(jobs, model.get("jobs"));
-        verify(jobPostingRepository).findByIsActiveTrueOrderByCreatedAtDesc();
+        assertEquals(List.of(), model.get("products"));
+        assertEquals(List.of(), model.get("categories"));
+        assertEquals(List.of(), model.get("recommendations"));
+        verify(recommendationService).getBestSellers();
     }
 }

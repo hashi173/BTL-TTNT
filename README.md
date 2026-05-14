@@ -1,124 +1,118 @@
 # Hashiji Cafe -- Coffee Shop Management System
 
-A full-stack coffee shop management platform built with **Java 17 / Spring Boot 3**. Designed for real-world operations: online ordering, recruitment management, financial tracking, and a professional customer-facing storefront.
-
-**Live Demo**: [Deploy your own instance -- see Deployment Guide below]
+A full-stack coffee shop ordering and admin management platform built with **Java 17 / Spring Boot 3**. The current scope covers storefront ordering, product/category/topping management, order tracking, admin reporting, and an AI recommendation/evaluation dashboard.
 
 ---
 
 ## Key Features
 
-### Advanced DBMS Integration (Course Demo)
-- **UUID Primary Keys**: Secure and globally unique identifiers used across all tables instead of predictable sequential IDs.
-- **Stored Procedures**: Complex atomic operations (e.g., `place_order` for inventory deduction and cart processing, `get_revenue_report` for fast data aggregation) handled directly by PostgreSQL to minimize network roundtrips.
-- **Database Triggers**: Automated data consistency rules (e.g., auto-updating product ratings upon new reviews, logging cart behaviors, enforcing single default addresses).
-- **ACID Transactions**: Demonstrable rollback capabilities when placing an order with insufficient inventory.
-
-### Customer Storefront (Public)
-- **Responsive Homepage**: Modern design with product carousels, category filtering, and smooth transitions.
-- **Full Shopping Cart**: Support for product customization including sizes, toppings, and special notes.
-- **Recruitment Portal**: Public job board with paginated job listings and CV upload functionality.
-- **Order Tracking**: Real-time order status lookup using unique tracking codes.
-- **Clean UI**: Built with Bootstrap 5 and customized CSS for a premium, localized experience.
+### Customer Storefront
+- **Responsive homepage:** Product menu, category filtering, search, and personalized recommendations.
+- **Shopping cart:** Product size, toppings, sugar/ice options, notes, and session-backed cart state.
+- **Checkout & tracking:** Anonymous or logged-in checkout, generated `ORD-XXXXXX` tracking codes, public order lookup, and PDF invoices.
+- **Profile pages:** Registered users can update profile details and view their order history.
 
 ### Admin Dashboard
-- **Revenue Analytics**: Visual reporting with Chart.js showing monthly trends and daily breakdowns.
-- **Product Performance**: Top-selling product rankings with visual metrics.
-- **Order Management**: Comprehensive status workflow (Pending -> Confirmed -> Shipping -> Completed).
-- **One-click Actions**: Quick status updates, order cancellations, and direct customer contact shortcuts.
+- **Product management:** Create/edit products, upload product images, paste image URLs, and activate/deactivate products.
+- **Catalog management:** Category and topping CRUD with cache eviction after catalog changes.
+- **Order workflow:** Manage `PENDING -> CONFIRMED -> SHIPPING -> COMPLETED` orders and cancellations.
+- **Reporting:** Dashboard and monthly history pages with Chart.js revenue and top-product visualizations.
+- **User operations:** Admin user list, status toggle, and password reset.
 
-### Recruitment & Careers
-- **Job Posting Management**: Create and manage job openings with specific types and requirements.
-- **Application Pipeline**: Track applicants from "New" through "Interviewing" to "Hired/Rejected".
-- **CV Management**: Centralized storage and viewing of applicant resumes.
-- **Status Tracking**: Applicants can check their progress using unique tracking codes.
+### AI Recommendation Module
+- **Hybrid recommendations:** Collaborative Filtering + Rule-based fallback for cold start users.
+- **Text AI utilities:** TF-IDF text similarity and Naive Bayes category classification.
+- **Evaluation dashboard:** Precision, Recall, F1, Hit Rate, MAP, baselines, ablation studies, and confusion matrix.
+- **Demo seeding:** `DataSeeder.java` creates 50 products, 30 users, and 10 months of synthetic order history for repeatable demos.
 
-### Financial Tracking
-- **Profit Reporting**: Automatic calculation of net profit by comparing revenue against costs.
-- **Financial History**: Monthly archive of financial performance for historical analysis.
-
-### Security
-- **Spring Security**: Robust role-based access control (ADMIN, STAFF).
-- **Data Protection**: BCrypt password hashing and CSRF protection.
-- **Environment Safety**: Sensitive configurations externalized via environment variables.
+### Persistence & Security
+- **UUID primary keys:** Used across entities while human-readable codes are generated for display.
+- **Spring Data JPA:** Hibernate manages schema updates in dev/demo environments.
+- **Transactions:** Checkout writes orders and order items atomically through `OrderService`.
+- **Spring Security:** Form login, BCrypt password hashing, role-based admin access, and CSRF protection.
+- **Caching:** Spring Cache defaults to in-memory cache, with Redis support available through `spring.cache.type=redis`.
 
 ---
 
 ## Tech Stack
 
-| Layer       | Technology                                      |
-|-------------|------------------------------------------------|
-| Backend     | Java 17, Spring Boot 3.2, Spring Security, JPA |
-| Database    | PostgreSQL (Supabase cloud, Docker, or local)   |
-| Frontend    | Thymeleaf, Bootstrap 5, HTMX, Chart.js          |
-| Caching     | Spring Cache (Simple / Redis)                   |
-| Build       | Maven with wrapper (no global install needed)   |
+| Layer | Technology |
+|---|---|
+| Backend | Java 17, Spring Boot 3.2, Spring Security, Spring Data JPA |
+| Database | PostgreSQL (Docker, local, or cloud) |
+| Frontend | Thymeleaf, Bootstrap 5, HTMX, Chart.js |
+| Caching | Spring Cache (Simple by default, Redis optional) |
+| Build | Maven Wrapper |
+| Tests | JUnit 5, Spring Boot Test, H2 |
 
 ---
 
-## Quick Start (DBMS Demo Mode)
+## Quick Start
 
-### Prerequisites
-- Docker & Docker Compose (for the local PostgreSQL instance)
-- Java 17+
+### Docker
 
-### 1. Run Everything via Docker Compose
-The project includes a `docker-compose.yml` to spin up PostgreSQL 15, pgAdmin 4, and the Spring Boot application (Backend + Frontend) all at once. See the full [Docker Guide](docs/DOCKER_GUIDE.md) for details.
 ```bash
 docker compose up -d --build
 ```
 
-### 2. Initialize Database
-1. In the default `dev` profile, the Spring Boot app automatically seeds demo users, products, orders, and chart history through `DataSeeder.java`.
-2. The web application will be available at `http://localhost:8080`.
-3. Access the database via pgAdmin (`http://localhost:5050`) or `psql` using the credentials in `application.properties`.
+The application runs at `http://localhost:8080`, and pgAdmin runs at `http://localhost:5050`.
 
----
+### Local Dev
 
-## Deployment (Render -- Free Tier)
+```bash
+./mvnw spring-boot:run
+```
 
-1. Push code to GitHub (credentials are externalized, safe to push)
-2. Create a [Render](https://render.com) Web Service connected to the repo
-3. Set environment variables in Render dashboard:
-   - `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (from Supabase)
-   - `APP_PROFILE=prod`
-4. Build command: `./mvnw clean install -DskipTests`
-5. Start command: `java -jar target/*.jar`
+On Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+The default `dev` profile enables demo data seeding through `src/main/resources/application-dev.properties`.
+
+Default admin account:
+
+| Username | Password |
+|---|---|
+| `admin` | `123456` |
 
 ---
 
 ## Project Structure
 
-```
+```text
 src/main/java/com/coffeeshop/
-  config/       -- Security, data seeding, MVC, Redis, metadata backfill
-  controller/   -- MVC controllers (14 controllers)
-  dto/          -- Data transfer objects for cart and requests
-  entity/       -- JPA entities (UUID based)
+  config/       -- Security, seeding, MVC, cache, metadata backfill
+  controller/   -- MVC controllers for storefront, admin, AI, users, orders
+  dto/          -- Cart DTOs
+  entity/       -- JPA entities
   repository/   -- Spring Data JPA repositories
-  service/      -- Core business logic services
+  service/      -- Business logic and AI services
+  util/         -- Shared display/formatting helpers
 
 src/main/resources/
-
-  seed-data.sql       -- Manual SQL demo data for DBMS presentation only
-  application.properties -- Primary configuration
-  templates/    -- Thymeleaf templates (admin, storefront, dashboard, etc.)
-  static/       -- CSS, JS, and asset files
-  messages.properties  -- Localization bundles
+  application*.properties
+  seed-data.sql       -- Manual SQL-only demo data
+  templates/          -- Thymeleaf templates
+  static/             -- CSS, JS, and image assets
+  messages.properties -- Message bundle
 ```
 
 ---
 
 ## Documentation
 
-Detailed documentation is available in the `/docs` directory:
 - [API Reference](docs/LTW/api_reference.md)
 - [Postman Guide](docs/LTW/postman_guide.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Docker Guide](docs/DOCKER_GUIDE.md)
 - [Database Schema](docs/LTW/database.md)
-- [Project Structure](docs/LTW/project_structure.md)
 - [Defense Script](docs/LTW/defense_script.md)
+- [AI System](docs/AI-SYSTEM.md)
+- [AI Demo Scenario](docs/AI-DEMO-SCENARIO.md)
+- [AI Defense Q&A](docs/AI-DEFENSE-QA.md)
+- [AI Team Guide](docs/AI-TEAM-GUIDE.md)
 
 ---
 

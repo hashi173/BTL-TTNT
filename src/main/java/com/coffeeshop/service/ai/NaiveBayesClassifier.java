@@ -284,7 +284,7 @@ public class NaiveBayesClassifier {
     }
 
     /**
-     * Lấy danh sách category keywords (để hiển thị trong chatbot).
+     * Lấy danh sách category keywords để hiển thị trên AI dashboard.
      */
     public Map<String, List<String>> getCategoryKeywords() {
         ensureTrained();

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * Trình tạo dữ liệu tổng hợp (synthetic data) cho đánh giá hệ thống gợiý.
+ * Trình tạo dữ liệu tổng hợp (synthetic data) cho đánh giá hệ thống gợi ý.
  *
  * ═══════════════════════════════════════════════════════════════
  * MỤC ĐÍCH

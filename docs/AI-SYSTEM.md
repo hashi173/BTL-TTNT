@@ -47,7 +47,7 @@
 ```
 src/main/java/com/coffeeshop/
 ├── service/
-│   ├── RecommendationService.java      # Hệ thống gợiý chính (CF + RB)
+│   ├── RecommendationService.java      # Hệ thống gợi ý chính (CF + RB)
 │   └── ai/
 │       ├── TextSimilarityService.java   # TF-IDF + Cosine Similarity
 │       ├── NaiveBayesClassifier.java    # Naive Bayes classifier
@@ -67,7 +67,7 @@ src/main/java/com/coffeeshop/
 **Nguyên lý:** Người dùng tương tự nhau sẽ thích sản phẩm tương tự.
 
 ```
-Bước 1: Xây dựng ma trận User-Product từ đơn hàng已完成
+Bước 1: Xây dựng ma trận User-Product từ đơn hàng đã hoàn thành
          ┌─────────┬───────┬───────┬───────┬───────┐
          │         │ Prod1 │ Prod2 │ Prod3 │ Prod4 │
          ├─────────┼───────┼───────┼───────┼───────┤
@@ -103,7 +103,7 @@ finalScore = 0.6 × CF + 0.4 × RB
 cos(θ) = (A · B) / (|A| × |B|)
 
 Ứng dụng: So sánh user vectors, so sánh text vectors
-Kết quả: 0.0 (完全不同) → 1.0 (完全相同)
+Kết quả: 0.0 (hoàn toàn khác) → 1.0 (hoàn toàn giống)
 ```
 
 ### 3.2 TF-IDF (Term Frequency - Inverse Document Frequency)
@@ -123,7 +123,7 @@ P(Class | Features) = P(Features | Class) × P(Class) / P(Features)
 
 Giả định "Naive": Các từ độc lập khi cho trước lớp
 Laplace Smoothing: P(word|class) = (count + 1) / (total + |V|)
-Log-probabilities để避免 underflow
+Log-probabilities để tránh underflow
 
 Ứng dụng: Phân loại sản phẩm vào category
 ```
@@ -136,10 +136,10 @@ Log-probabilities để避免 underflow
 
 | Chỉ số | Công thức | Ý nghĩa |
 |--------|-----------|----------|
-| **Precision@K** | \|recommended ∩ relevant\| / K | Trong K gợiý, bao nhiêu % đúng? |
-| **Recall@K** | \|recommended ∩ relevant\| / \|relevant\| | Bao nhiêu % sản phẩm liên quan được gợiý? |
+| **Precision@K** | \|recommended ∩ relevant\| / K | Trong K gợi ý, bao nhiêu % đúng? |
+| **Recall@K** | \|recommended ∩ relevant\| / \|relevant\| | Bao nhiêu % sản phẩm liên quan được gợi ý? |
 | **F1-Score** | 2 × (P × R) / (P + R) | Cân bằng Precision và Recall |
-| **Hit Rate** | users with hits / total users | Bao nhiêu % user có ≥1 gợiý đúng? |
+| **Hit Rate** | users with hits / total users | Bao nhiêu % user có ≥1 gợi ý đúng? |
 | **MAP@K** | mean(1/rank for each hit) | Độ chính xác có xét thứ tự |
 
 ### 4.2 Leave-One-Out Cross-Validation
@@ -147,7 +147,7 @@ Log-probabilities để避免 underflow
 ```
 Với mỗi user có ≥2 sản phẩm:
 1. Ẩn 1 sản phẩm (test item)
-2. Dùng phần còn lại để gợiý
+2. Dùng phần còn lại để gợi ý
 3. Kiểm tra test item có trong top-K không
 4. Tính P, R, F1, AP
 5. Trung bình hóa trên tất cả user
@@ -174,10 +174,10 @@ Hiển thị:
 
 | Strategy | Mô tả | Mục đích |
 |----------|-------|----------|
-| **Random** | Gợiý ngẫu nhiên | Floor (tệ nhất) |
-| **Popularity** | Gợiý bán chạy nhất | Simple baseline |
-| **CF-Only** | Chỉ dùng CF | Đánh giá CF单独 |
-| **RB-Only** | Chỉ dùng Rule-based | Đánh giá RB单独 |
+| **Random** | Gợi ý ngẫu nhiên | Floor (tệ nhất) |
+| **Popularity** | Gợi ý bán chạy nhất | Simple baseline |
+| **CF-Only** | Chỉ dùng CF | Đánh giá CF riêng |
+| **RB-Only** | Chỉ dùng Rule-based | Đánh giá RB riêng |
 | **Hybrid** | CF + RB kết hợp | Hệ thống hiện tại |
 
 ### 5.2 Ablation Study: CF/RB Weights
@@ -198,7 +198,7 @@ Thử K = 1, 2, 3, 4, 5, 6, 8, 10, 15, 20
 
 - **50 sản phẩm:** 15 Coffee + 15 Tea + 10 Smoothie + 10 Juice
 - **30 users:** 4 preference clusters (Coffee/Tea/Smoothie/Juice)
-- **~15,000 đơn hàng:** 10 tháng lịch sử, 70% preferred + 30% random
+- **~1.780 đơn hàng:** 10 tháng lịch sử, 70% preferred + 30% random, cộng một vài đơn active
 
 ### 6.2 Chạy đánh giá
 

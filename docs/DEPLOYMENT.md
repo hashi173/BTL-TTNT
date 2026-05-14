@@ -71,8 +71,8 @@ $env:PATH += ";C:\Program Files\PostgreSQL\15\bin"
 #### Bước 2.3: Clone project
 
 ```powershell
-git clone https://github.com/hashi173/BTL-LTW.git
-cd BTL-LTW
+git clone https://github.com/hashi173/BTL-TTNT.git
+cd BTL-TTNT
 ```
 
 ---
@@ -127,8 +127,8 @@ psql --version
 #### Bước 2.3: Clone project
 
 ```bash
-git clone https://github.com/hashi173/BTL-LTW.git
-cd BTL-LTW
+git clone https://github.com/hashi173/BTL-TTNT.git
+cd BTL-TTNT
 ```
 
 ---
@@ -207,7 +207,7 @@ Các giá trị mặc định đã được thiết lập sẵn:
 
 | Biến               | Giá trị mặc định                             |
 |---------------------|----------------------------------------------|
-| `DB_URL`            | `jdbc:postgresql://localhost:5432/cafe_db`    |
+| `DB_URL`            | `jdbc:postgresql://localhost:5432/cafe_db_ttnt` |
 | `DB_USERNAME`       | `cafe_admin`                                 |
 | `DB_PASSWORD`       | `123`                                        |
 
@@ -242,7 +242,7 @@ export DB_PASSWORD="your_password"
 
 ```powershell
 # Bước 1: Mở PowerShell tại thư mục project
-cd đường-dẫn-đến-project\BTL-LTW
+cd đường-dẫn-đến-project\BTL-TTNT
 
 # Bước 2: Đặt profile dev
 $env:APP_PROFILE = "dev"
@@ -255,7 +255,7 @@ $env:APP_PROFILE = "dev"
 
 ```bash
 # Bước 1: Mở Terminal tại thư mục project
-cd đường-dẫn-đến-project/BTL-LTW
+cd đường-dẫn-đến-project/BTL-TTNT
 
 # Bước 2: Cấp quyền chạy Maven Wrapper (chỉ lần đầu)
 chmod +x mvnw
@@ -277,15 +277,14 @@ APP_PROFILE=dev ./mvnw spring-boot:run
 | Loại dữ liệu | Mã định dạng                         | Số lượng         |
 |---------------|--------------------------------------|------------------|
 | Category      | `CAT-00001`, `CAT-00002`, ...        | 4 loại           |
-| Product       | `PRD-00001`, `PRD-00002`, ...        | 6 sản phẩm       |
-| Order         | `ORD-000001`, `ORD-000002`, ...      | ~1000+ đơn       |
-| Job Posting   | `JOB-000001`, `JOB-000002`, ...      | 3 vị trí         |
+| Product       | `PRD-00001`, `PRD-00002`, ...        | 50 sản phẩm      |
+| Order         | `ORD-000001`, `ORD-000002`, ...      | ~1.780 đơn       |
 
 **Danh sách sản phẩm mẫu:**
-- ☕ Coffee: Cafe Latte, Espresso
-- 🍵 Tea: Peach Tea, Sakura Blossom Tea
-- 🥤 Smoothie: Strawberry Smoothie
-- 🥥 Juice: Coconut Juice
+- Coffee: 15 món, ví dụ Cafe Latte, Espresso, Cappuccino, Cold Brew
+- Tea: 15 món, ví dụ Peach Tea, Sakura Blossom Tea, Matcha Latte, Oolong Tea
+- Smoothie: 10 món, ví dụ Strawberry Smoothie, Mango Smoothie
+- Juice: 10 món, ví dụ Coconut Juice, Orange Juice
 
 ## 6. Kiểm tra ứng dụng
 
@@ -299,7 +298,8 @@ Sau khi khởi chạy thành công, mở trình duyệt truy cập:
 | ⚙️ Admin Dashboard         | http://localhost:8080/admin/dashboard  |
 | 📋 Quản lý đơn hàng        | http://localhost:8080/admin/orders     |
 | 🍵 Quản lý sản phẩm        | http://localhost:8080/admin/products   |
-| 📝 Quản lý tuyển dụng      | http://localhost:8080/admin/recruitment|
+| 👤 Quản lý người dùng      | http://localhost:8080/admin/users      |
+| 🤖 AI Evaluation           | http://localhost:8080/admin/ai/dashboard |
 
 ---
 

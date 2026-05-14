@@ -1,144 +1,121 @@
-# Hashiji Cafe – Database Documentation
+# Hashiji Cafe - Database Documentation
 
 ## 1. Overview
 
 - **DBMS:** PostgreSQL
-- **Schema strategy:** JPA `ddl-auto=update` (Hibernate auto-creates/alters tables from entities)
-- **Primary key type:** UUID (`uuid-ossp` extension)
-- **Audit fields:** All entities extend `BaseEntity` → `id`, `created_at`, `updated_at`
+- **Schema strategy:** JPA `ddl-auto=update`
+- **Primary key type:** UUID through `BaseEntity`
+- **Audit fields:** `id`, `created_at`, `updated_at`
+- **Manual SQL demo:** `src/main/resources/seed-data.sql` is optional and should not be imported together with Java `DataSeeder`.
 
 ---
 
 ## 2. Tables
 
 ### `users`
+
 | Column | Type | Notes |
 |---|---|---|
 | id | UUID PK | Auto-generated |
-| username | VARCHAR(50) | Unique, login credential |
-| password | VARCHAR(255) | BCrypt-hashed |
-| full_name | VARCHAR(100) | |
-| email | VARCHAR(100) | Nullable, unique |
-| phone | VARCHAR(20) | Nullable, unique |
-| user_code | VARCHAR(20) | Nullable, unique, auto-generated |
-| role | VARCHAR(20) | Enum: ADMIN, STAFF |
-| hourly_rate | DOUBLE | Used for payroll estimation |
-| is_active | BOOLEAN | Soft delete support |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
-
----
+| username | VARCHAR(50) | Unique login credential |
+| password | VARCHAR(100) | BCrypt-hashed |
+| full_name | VARCHAR(100) | Nullable |
+| role | VARCHAR | Enum: `ADMIN`, `STAFF`, `USER` |
+| email | VARCHAR(100) | Nullable |
+| phone | VARCHAR(15) | Nullable |
+| hourly_rate | DOUBLE | Optional staff/payroll metadata |
+| user_code | VARCHAR(20) | Unique display code |
+| active | BOOLEAN | Account active flag |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `categories`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| name | VARCHAR(100) | e.g. "Coffee", "Tea" |
-| description | TEXT | |
-
----
+| id | UUID PK | Auto-generated |
+| category_code | VARCHAR(64) | Display code, e.g. `CAT-00001` |
+| name | VARCHAR(50) | Unique category name |
+| description | VARCHAR(255) | Nullable |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `products`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| category_id | UUID FK → categories | |
-| name | VARCHAR(200) | |
-| description | TEXT | |
-| image | VARCHAR(500) | URL or relative path |
-| is_active | BOOLEAN | Soft-delete / hide from menu |
-
----
+| id | UUID PK | Auto-generated |
+| category_id | UUID FK -> `categories.id` | Many products per category |
+| product_code | VARCHAR(96) | Display code, e.g. `PRD-00001` |
+| name | VARCHAR(100) | Unique product name |
+| description | TEXT | Nullable |
+| image | VARCHAR(500) | Local path, upload path, or HTTP(S) URL |
+| base_price | NUMERIC(10,2) | Base display price |
+| is_available | BOOLEAN | Hide/show from storefront |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `product_sizes`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| product_id | UUID FK → products | |
-| size_name | VARCHAR(10) | e.g. "S", "M", "L" |
-| price | DOUBLE | Price for this size |
-
----
+| id | UUID PK | Auto-generated |
+| product_id | UUID FK -> `products.id` | Many sizes per product |
+| size_name | VARCHAR | e.g. `Standard`, `S`, `M`, `L` |
+| price | DOUBLE | Size price |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `toppings`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| name | VARCHAR(100) | |
-| price | DOUBLE | Added to base size price |
-
----
-
----
+| id | UUID PK | Auto-generated |
+| name | VARCHAR(50) | Unique topping name |
+| price | DOUBLE | Added to selected size price |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `orders`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| user_id | UUID FK → users | Nullable (anonymous checkout) |
-| customer_name | VARCHAR(200) | Snapshot at order time |
-| phone | VARCHAR(20) | |
-| address | TEXT | Delivery address |
-| note | TEXT | |
-| order_type | VARCHAR(50) | e.g. "Online", "In-Store Order" |
-| total_amount | DOUBLE | Sum of items + toppings |
-| grand_total | NUMERIC(12,2) | Same as total_amount (legacy) |
-| status | VARCHAR(20) | Enum: PENDING, CONFIRMED, SHIPPING, COMPLETED, CANCELLED |
-| order_status | VARCHAR(20) | String mirror of status (legacy) |
-| tracking_code | VARCHAR(20) | Unique, format: ORD-XXXXXX |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
-
----
+| id | UUID PK | Auto-generated |
+| user_id | UUID FK -> `users.id` | Nullable for anonymous checkout |
+| sub_total | NUMERIC(12,2) | Cart subtotal snapshot |
+| grand_total | NUMERIC(12,2) | Final total snapshot |
+| order_status | VARCHAR(50) | String mirror for view/PDF compatibility |
+| customer_name | VARCHAR | Customer snapshot |
+| phone | VARCHAR | Phone snapshot |
+| address_text | TEXT | Delivery address |
+| note | TEXT | Customer note |
+| total_amount | DOUBLE | Total used by reports |
+| status | VARCHAR | Enum: `PENDING`, `CONFIRMED`, `SHIPPING`, `COMPLETED`, `CANCELLED` |
+| tracking_code | VARCHAR | Unique code, e.g. `ORD-000001` |
+| order_type | VARCHAR | `Delivery`, `Takeaway`, etc. |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ### `order_items`
+
 | Column | Type | Notes |
 |---|---|---|
-| id | UUID PK | |
-| order_id | UUID FK → orders | |
-| product_id | UUID FK → products | Nullable (product may be deleted) |
-| snapshot_product_name | VARCHAR(200) | Name at purchase time |
-| snapshot_unit_price | NUMERIC(10,2) | Price at purchase time |
-| quantity | INT | |
-| sub_total | NUMERIC(12,2) | unit_price × quantity |
-| snapshot_options | TEXT | Size, toppings string at purchase time |
-
-
+| id | UUID PK | Auto-generated |
+| order_id | UUID FK -> `orders.id` | Many items per order |
+| product_id | UUID FK -> `products.id` | Nullable if product is deleted later |
+| snapshot_product_name | VARCHAR(255) | Product name at purchase time |
+| snapshot_unit_price | NUMERIC(12,2) | Unit price at purchase time |
+| quantity | INT | Purchased quantity |
+| snapshot_options | JSON | Size, toppings, sugar/ice, note summary |
+| sub_total | NUMERIC(12,2) | `snapshot_unit_price * quantity` |
+| created_at | TIMESTAMP | From `BaseEntity` |
+| updated_at | TIMESTAMP | From `BaseEntity` |
 
 ---
 
-### `job_postings`
-| Column | Type | Notes |
-|---|---|---|
-| id | UUID PK | |
-| title | VARCHAR(100) | |
-| location | VARCHAR(100) | e.g. "Hanoi", "Ho Chi Minh" |
-| type | VARCHAR(50) | Enum: FULL_TIME, PART_TIME, INTERNSHIP |
-| description | TEXT | |
-| requirements | TEXT | |
-| job_code | VARCHAR(20) | Unique, format: JOB-000001 |
-| is_active | BOOLEAN | Controls visibility on careers page |
-| created_at | TIMESTAMP | |
+## 3. Relationships
 
----
-
-### `job_applications`
-| Column | Type | Notes |
-|---|---|---|
-| id | UUID PK | |
-| full_name | VARCHAR(200) | |
-| email | VARCHAR(100) | |
-| phone | VARCHAR(20) | |
-| position | VARCHAR(200) | Free-text position applied for |
-| cv_url | VARCHAR(500) | Uploaded CV file path |
-| tracking_code | VARCHAR(20) | Unique, format: CV-XXXXXXXX |
-| status | VARCHAR(20) | Enum: PENDING, REVIEWED, ACCEPTED, REJECTED |
-| created_at | TIMESTAMP | |
-
----
-
-## 3. Relationships (ERD Summary)
-```
+```text
 users ──< orders
 
 categories ──< products
@@ -146,3 +123,5 @@ products ──< product_sizes
 
 orders ──< order_items >── products (nullable)
 ```
+
+Recruitment/job tables are not present in the current codebase.

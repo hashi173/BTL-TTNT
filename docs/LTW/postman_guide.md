@@ -57,7 +57,6 @@ Since the app uses form-based login (Spring Security), all admin requests need a
 - **POST** `{{base_url}}/admin/products/save`
 - Body: `form-data`
   - `name` = `Test Latte`
-  - `nameVi` = `Test Latte VI`
   - `description` = `A test product`
   - `category.id` = `<valid category UUID>`
   - `sizes[0].sizeName` = `M`
@@ -144,46 +143,65 @@ Since the app uses form-based login (Spring Security), all admin requests need a
 
 ---
 
-### 👤 Recruitment, Auth, Toppings, Dashboard (Quỳnh)
+### 👤 Auth, Users, Toppings, Dashboard (Quỳnh)
 
-
-#### TC-19: Admin - List Job Applications
-- **GET** `{{base_url}}/admin/recruitment`
-- Expected: `200 OK`, application list
-
-#### TC-20: Public - Submit Job Application
-- **POST** `{{base_url}}/careers/apply`
-- Body: `form-data`
-  - `fullName` = `Le Van C`
-  - `email` = `levanc@example.com`
-  - `phone` = `0912345678`
-  - `position` = `Barista`
-  - `cvFile` = *(attach any PDF)*
-- Expected: `302` redirect to `/#careers` with flash success and `trackingCode` (format: `CV-XXXXXXXX`)
-
-#### TC-21: Admin - Update Application Status
-- **POST** `{{base_url}}/admin/recruitment/<application-UUID>/status`
+#### TC-19: Public - Register User
+- **POST** `{{base_url}}/register`
 - Body: `x-www-form-urlencoded`
-  - `status` = `ACCEPTED`
-- Expected: `302` redirect
+  - `username` = `testuser`
+  - `password` = `123456`
+  - `confirmPassword` = `123456`
+  - `fullName` = `Test User`
+  - `email` = `testuser@example.com`
+  - `phone` = `0900000000`
+- Expected: `302` redirect to `/login`
 
-#### TC-22: Admin - List Job Postings
-- **GET** `{{base_url}}/admin/recruitment/jobs`
-- Expected: `200 OK`, list of job postings with codes (JOB-000001, etc.)
+#### TC-20: Auth - View Profile
+- **GET** `{{base_url}}/profile`
+- Expected: `200 OK` after logging in as a user
 
-#### TC-23: Admin - Create Job Posting
-- **POST** `{{base_url}}/admin/recruitment/jobs/save`
+#### TC-21: Auth - Update Profile
+- **POST** `{{base_url}}/profile`
 - Body: `x-www-form-urlencoded`
-  - `title` = `Test Barista`
-  - `location` = `Hanoi`
-  - `type` = `FULL_TIME`
-  - `description` = `Make great coffee`
-  - `requirements` = `1 year experience`
-- Expected: `302` redirect to `/admin/recruitment/jobs`
+  - `fullName` = `Test User Updated`
+  - `email` = `updated@example.com`
+  - `phone` = `0900000001`
+- Expected: `302` redirect to `/profile`
 
-#### TC-24: Admin - Toggle Job Active Status
-- **GET** `{{base_url}}/admin/recruitment/jobs/toggle/<job-UUID>`
-- Expected: `302` redirect
+#### TC-22: Auth - My Orders
+- **GET** `{{base_url}}/my-orders`
+- Expected: `200 OK`, current user's order history
+
+#### TC-23: Admin - List Users
+- **GET** `{{base_url}}/admin/users`
+- Expected: `200 OK`, user table
+
+#### TC-24: Admin - Toggle User Status
+- **POST** `{{base_url}}/admin/users/<user-UUID>/toggle`
+- Expected: `302` redirect to `/admin/users`
+
+#### TC-25: Admin - Reset User Password
+- **POST** `{{base_url}}/admin/users/<user-UUID>/reset-password`
+- Expected: `302` redirect to `/admin/users`
+
+#### TC-26: Admin - Manage Toppings
+- **GET** `{{base_url}}/admin/toppings`
+- Expected: `200 OK`, topping table and modal form
+
+#### TC-27: Admin - Save Topping
+- **POST** `{{base_url}}/admin/toppings/save`
+- Body: `x-www-form-urlencoded`
+  - `name` = `Extra Shot`
+  - `price` = `10000`
+- Expected: `302` redirect to `/admin/toppings`
+
+#### TC-28: Admin - Dashboard
+- **GET** `{{base_url}}/admin/dashboard`
+- Expected: `200 OK`, KPI cards and charts
+
+#### TC-29: Admin - AI Evaluation Dashboard
+- **GET** `{{base_url}}/admin/ai/dashboard`
+- Expected: `200 OK`, AI metrics and charts
 
 ---
 

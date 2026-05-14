@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
  * Không có baseline, không thể biết hệ thống hybrid tốt hơn "đoán mò"
  * bao nhiêu. Hai baseline:
  *
- * 1. Random: gợiý ngẫu nhiên → đo FLOOR (tệ nhất có thể)
- * 2. Popularity: gợiý sản phẩm bán chạy → đo CEILING đơn giản
+ * 1. Random: gợi ý ngẫu nhiên → đo FLOOR (tệ nhất có thể)
+ * 2. Popularity: gợi ý sản phẩm bán chạy → đo CEILING đơn giản
  *
  * Nếu hybrid > popularity > random → hệ thống có giá trị.
  * Nếu hybrid ≈ popularity → CF không đóng góp gì.
@@ -33,7 +33,7 @@ public class BaselineRecommender {
 
     /**
      * Baseline 1: Random Recommendation.
-     * Gợiý K sản phẩm ngẫu nhiên từ catalog.
+     * Gợi ý K sản phẩm ngẫu nhiên từ catalog.
      */
     public List<Product> recommendRandom(int k, long seed) {
         List<Product> all = productRepository.findAllWithDetails().stream()
@@ -47,7 +47,7 @@ public class BaselineRecommender {
 
     /**
      * Baseline 2: Popularity-based Recommendation.
-     * Gợiý K sản phẩm bán chạy nhất (theo tổng số lượng đã bán).
+     * Gợi ý K sản phẩm bán chạy nhất (theo tổng số lượng đã bán).
      */
     public List<Product> recommendByPopularity(int k) {
         List<Object[]> totals = orderItemRepository.findProductPurchaseTotals();

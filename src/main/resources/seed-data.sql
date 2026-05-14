@@ -87,13 +87,7 @@ INSERT INTO order_items (id, created_at, updated_at, order_id, product_id, snaps
 INSERT INTO order_items (id, created_at, updated_at, order_id, product_id, snapshot_product_name, snapshot_unit_price, quantity, sub_total) VALUES 
 (uuid_generate_v4(), NOW() - INTERVAL '1 hour', NOW() - INTERVAL '1 hour', 'd0000000-0000-0000-0000-000000000005', 'f0000000-0000-0000-0000-000000000004', 'Cappuccino', 50000, 1, 50000);
 
--- 7. Khởi tạo dữ liệu Job Postings (Tuyển dụng)
-INSERT INTO job_postings (id, created_at, updated_at, title, location, type, description, requirements, is_active) VALUES
-(gen_random_uuid(), NOW(), NOW(), 'Lead Barista', 'District 1, HCMC', 'FULL_TIME', 'Seeking a passionate coffee expert to lead our morning shift. You will be responsible for quality control and training junior staff.', '3+ years experience in specialty coffee, Latte Art mastery, leadership skills.', true),
-(gen_random_uuid(), NOW(), NOW(), 'Store Supervisor', 'District 3, HCMC', 'FULL_TIME', 'Oversee daily operations, manage inventory, and ensure the highest level of customer satisfaction.', 'Management experience in F&B, strong communication, problem-solving skills.', true),
-(gen_random_uuid(), NOW(), NOW(), 'Customer Experience Specialist', 'All Branches', 'PART_TIME', 'Create a welcoming atmosphere for our guests. Responsible for greeting, serving, and handling customer feedback.', 'Friendly personality, energetic, good English communication is a plus.', true);
-
 -- =========================================================================
 -- HẾT SCRIPT SEED DATA
--- Hệ thống đã có đủ dữ liệu để Test Triggers & Procedures.
+-- Hệ thống đã có đủ dữ liệu cho demo SQL-only cơ bản.
 -- =========================================================================

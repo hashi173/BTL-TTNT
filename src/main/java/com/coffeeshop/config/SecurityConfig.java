@@ -25,7 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Static resources — public
+                        // Static resources are public
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         // Public pages
                         .requestMatchers("/", "/menu/**", "/product/**", "/products/**",
