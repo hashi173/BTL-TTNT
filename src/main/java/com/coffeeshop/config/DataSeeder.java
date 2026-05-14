@@ -29,8 +29,6 @@ import java.util.Random;
 @ConditionalOnProperty(name = "app.seed-data", havingValue = "true")
 public class DataSeeder implements CommandLineRunner {
 
-    private static final String EXTERNAL_IMAGE_BASE_URL = "https://loremflickr.com/640/640/";
-
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductSizeRepository productSizeRepository;
@@ -317,111 +315,111 @@ public class DataSeeder implements CommandLineRunner {
 
         // COFFEE (15 products)
         createProduct("Cafe Latte", "Creamy espresso with steamed milk foam art.",
-                "/images/products/CaffeLatte.png", coffee, 55000.0);
+                productImage("CaffeLatte.png"), coffee, 55000.0);
         createProduct("Espresso", "Intense double-shot espresso from Arabica beans.",
-                "/images/products/Espresso.png", coffee, 45000.0);
+                productImage("Espresso.png"), coffee, 45000.0);
         createProduct("Cappuccino", "Rich espresso topped with thick milk foam.",
-                externalProductImage("cappuccino,coffee", 1003), coffee, 55000.0);
+                productImage("Cappuccino.png"), coffee, 55000.0);
         createProduct("Americano", "Smooth espresso diluted with hot water.",
-                externalProductImage("americano,coffee", 1004), coffee, 42000.0);
+                productImage("Americano.png"), coffee, 42000.0);
         createProduct("Mocha", "Espresso with chocolate syrup and steamed milk.",
-                externalProductImage("mocha,coffee", 1005), coffee, 60000.0);
+                productImage("Mocha.png"), coffee, 60000.0);
         createProduct("Caramel Macchiato", "Espresso with vanilla and caramel drizzle.",
-                externalProductImage("caramel,macchiato,coffee", 1006), coffee, 62000.0);
+                productImage("CaramelMacchiato.png"), coffee, 62000.0);
         createProduct("Flat White", "Velvety microfoam over double espresso.",
-                externalProductImage("flatwhite,coffee", 1007), coffee, 58000.0);
+                productImage("FlatWhite.png"), coffee, 58000.0);
         createProduct("Cold Brew", "Slow-steeped cold coffee, smooth and bold.",
-                externalProductImage("coldbrew,coffee", 1008), coffee, 50000.0);
+                productImage("ColdBrew.png"), coffee, 50000.0);
         createProduct("Vietnamese Coffee", "Traditional drip coffee with condensed milk.",
-                externalProductImage("vietnamese,coffee", 1009), coffee, 40000.0);
+                productImage("VietnameseCoffee.png"), coffee, 40000.0);
         createProduct("Affogato", "Vanilla ice cream drowned in hot espresso.",
-                externalProductImage("affogato,dessert", 1010), coffee, 65000.0);
+                productImage("Affogato.png"), coffee, 65000.0);
         createProduct("Hazelnut Latte", "Latte with roasted hazelnut flavor.",
-                externalProductImage("hazelnut,latte,coffee", 1011), coffee, 60000.0);
+                productImage("HazelnutLatte.png"), coffee, 60000.0);
         createProduct("Coconut Coffee", "Coffee blended with fresh coconut cream.",
-                externalProductImage("coconut,coffee", 1012), coffee, 58000.0);
+                productImage("CoconutCoffee.png"), coffee, 58000.0);
         createProduct("Matcha Espresso", "Fusion of matcha and espresso with milk.",
-                externalProductImage("matcha,espresso", 1013), coffee, 62000.0);
+                productImage("MatchaEspresso.png"), coffee, 62000.0);
         createProduct("Salted Caramel Coffee", "Coffee with sea salt caramel sauce.",
-                externalProductImage("saltedcaramel,coffee", 1014), coffee, 63000.0);
+                productImage("SaltedCaramelCoffee.png"), coffee, 63000.0);
         createProduct("Iced Coffee", "Chilled coffee served over ice.",
-                externalProductImage("iced,coffee", 1015), coffee, 38000.0);
+                productImage("IcedCoffee.png"), coffee, 38000.0);
 
         // TEA (15 products)
         createProduct("Peach Tea", "Refreshing peach tea with fresh peach slices.",
-                "/images/products/PeachTea.png", tea, 55000.0);
+                productImage("PeachTea.png"), tea, 55000.0);
         createProduct("Sakura Blossom Tea", "Delicate cherry blossom infused green tea.",
-                "/images/products/SakuraBlossomTea.png", tea, 58000.0);
+                productImage("SakuraBlossomTea.png"), tea, 58000.0);
         createProduct("Matcha Latte", "Premium Japanese matcha with steamed milk.",
-                externalProductImage("matcha,latte", 2003), tea, 60000.0);
+                productImage("MatchaLatte.png"), tea, 60000.0);
         createProduct("Oolong Tea", "Semi-oxidized Taiwan oolong, floral aroma.",
-                externalProductImage("oolong,tea", 2004), tea, 52000.0);
+                productImage("OolongTea.png"), tea, 52000.0);
         createProduct("Jasmine Tea", "Fragrant jasmine-scented green tea.",
-                externalProductImage("jasmine,tea", 2005), tea, 48000.0);
+                productImage("JasmineTea.png"), tea, 48000.0);
         createProduct("Earl Grey", "Classic black tea with bergamot oil.",
-                externalProductImage("earlgrey,tea", 2006), tea, 50000.0);
+                productImage("EarlGrey.png"), tea, 50000.0);
         createProduct("Chamomile Tea", "Calming chamomile flowers, caffeine-free.",
-                externalProductImage("chamomile,tea", 2007), tea, 45000.0);
+                productImage("ChamomileTea.png"), tea, 45000.0);
         createProduct("Thai Tea", "Sweet Thai-style tea with condensed milk.",
-                externalProductImage("thaitea,tea", 2008), tea, 52000.0);
+                productImage("ThaiTea.png"), tea, 52000.0);
         createProduct("Passion Fruit Tea", "Tropical passion fruit green tea.",
-                externalProductImage("passionfruit,tea", 2009), tea, 55000.0);
+                productImage("PassionFruitTea.png"), tea, 55000.0);
         createProduct("Lychee Tea", "Sweet lychee black tea with fruit bits.",
-                externalProductImage("lychee,tea", 2010), tea, 55000.0);
+                productImage("LycheeTea.png"), tea, 55000.0);
         createProduct("Mango Tea", "Tropical mango infused oolong tea.",
-                externalProductImage("mango,tea", 2011), tea, 56000.0);
+                productImage("MangoTea.png"), tea, 56000.0);
         createProduct("Strawberry Tea", "Fresh strawberry green tea.",
-                externalProductImage("strawberry,tea", 2012), tea, 54000.0);
+                productImage("StrawberryTea.png"), tea, 54000.0);
         createProduct("Lemon Tea", "Classic lemon black tea, refreshing.",
-                externalProductImage("lemon,tea", 2013), tea, 42000.0);
+                productImage("LemonTea.png"), tea, 42000.0);
         createProduct("Honey Ginger Tea", "Warm ginger tea with natural honey.",
-                externalProductImage("honey,ginger,tea", 2014), tea, 48000.0);
+                productImage("HoneyGingerTea.png"), tea, 48000.0);
         createProduct("Taro Milk Tea", "Creamy taro flavored milk tea.",
-                externalProductImage("taro,milktea", 2015), tea, 55000.0);
+                productImage("TaroMilkTea.png"), tea, 55000.0);
 
         // SMOOTHIE (10 products)
         createProduct("Strawberry Smoothie", "Thick strawberry smoothie blended with fresh milk.",
-                "/images/products/StrawberrySmoothie.png", smoothie, 60000.0);
+                productImage("StrawberrySmoothie.png"), smoothie, 60000.0);
         createProduct("Mango Smoothie", "Creamy mango smoothie with yogurt.",
-                externalProductImage("mango,smoothie", 3002), smoothie, 62000.0);
+                productImage("MangoSmoothie.png"), smoothie, 62000.0);
         createProduct("Banana Smoothie", "Banana blended with milk and honey.",
-                externalProductImage("banana,smoothie", 3003), smoothie, 55000.0);
+                productImage("BananaSmoothie.png"), smoothie, 55000.0);
         createProduct("Blueberry Smoothie", "Antioxidant-rich blueberry smoothie.",
-                externalProductImage("blueberry,smoothie", 3004), smoothie, 65000.0);
+                productImage("BlueberrySmoothie.png"), smoothie, 65000.0);
         createProduct("Avocado Smoothie", "Creamy avocado with condensed milk.",
-                externalProductImage("avocado,smoothie", 3005), smoothie, 60000.0);
+                productImage("AvocadoSmoothie.png"), smoothie, 60000.0);
         createProduct("Dragon Fruit Smoothie", "Vibrant dragon fruit smoothie.",
-                externalProductImage("dragonfruit,smoothie", 3006), smoothie, 62000.0);
+                productImage("DragonFruitSmoothie.png"), smoothie, 62000.0);
         createProduct("Papaya Smoothie", "Sweet papaya smoothie with milk.",
-                externalProductImage("papaya,smoothie", 3007), smoothie, 55000.0);
+                productImage("PapayaSmoothie.png"), smoothie, 55000.0);
         createProduct("Peanut Smoothie", "Rich peanut butter smoothie.",
-                externalProductImage("peanut,smoothie", 3008), smoothie, 58000.0);
+                productImage("PeanutSmoothie.png"), smoothie, 58000.0);
         createProduct("Mixed Berry Smoothie", "Blend of strawberry, blueberry, raspberry.",
-                externalProductImage("berry,smoothie", 3009), smoothie, 68000.0);
+                productImage("MixedBerrySmoothie.png"), smoothie, 68000.0);
         createProduct("Green Detox Smoothie", "Spinach, apple, cucumber, ginger blend.",
-                externalProductImage("green,smoothie", 3010), smoothie, 65000.0);
+                productImage("GreenDetoxSmoothie.png"), smoothie, 65000.0);
 
         // JUICE (10 products)
         createProduct("Coconut Juice", "Fresh young coconut water with coconut jelly.",
-                "/images/products/CoconutJuice.png", juice, 50000.0);
+                productImage("CoconutJuice.png"), juice, 50000.0);
         createProduct("Orange Juice", "Freshly squeezed orange juice.",
-                externalProductImage("orange,juice", 4002), juice, 45000.0);
+                productImage("OrangeJuice.png"), juice, 45000.0);
         createProduct("Watermelon Juice", "Chilled watermelon juice, no sugar added.",
-                externalProductImage("watermelon,juice", 4003), juice, 42000.0);
+                productImage("WatermelonJuice.png"), juice, 42000.0);
         createProduct("Pineapple Juice", "Tropical pineapple juice with mint.",
-                externalProductImage("pineapple,juice", 4004), juice, 45000.0);
+                productImage("PineappleJuice.png"), juice, 45000.0);
         createProduct("Carrot Juice", "Fresh carrot juice with a hint of ginger.",
-                externalProductImage("carrot,juice", 4005), juice, 48000.0);
+                productImage("CarrotJuice.png"), juice, 48000.0);
         createProduct("Apple Juice", "Crisp apple juice, freshly pressed.",
-                externalProductImage("apple,juice", 4006), juice, 45000.0);
+                productImage("AppleJuice.png"), juice, 45000.0);
         createProduct("Grape Juice", "Rich purple grape juice.",
-                externalProductImage("grape,juice", 4007), juice, 50000.0);
+                productImage("GrapeJuice.png"), juice, 50000.0);
         createProduct("Lime Soda", "Fresh lime juice with sparkling water.",
-                externalProductImage("lime,soda", 4008), juice, 38000.0);
+                productImage("LimeSoda.png"), juice, 38000.0);
         createProduct("Passion Fruit Juice", "Tangy passion fruit juice with sugar.",
-                externalProductImage("passionfruit,juice", 4009), juice, 48000.0);
+                productImage("PassionFruitJuice.png"), juice, 48000.0);
         createProduct("Sugarcane Juice", "Fresh pressed sugarcane with calamansi.",
-                externalProductImage("sugarcane,juice", 4010), juice, 35000.0);
+                productImage("SugarcaneJuice.png"), juice, 35000.0);
 
         log.info("Products seeded: 50 products across 4 categories.");
     }
@@ -435,8 +433,8 @@ public class DataSeeder implements CommandLineRunner {
         return categoryRepository.save(category);
     }
 
-    private String externalProductImage(String keywords, int lock) {
-        return EXTERNAL_IMAGE_BASE_URL + keywords + "?lock=" + lock;
+    private String productImage(String fileName) {
+        return "/images/products/" + fileName;
     }
 
     private void createProduct(String name, String description,
