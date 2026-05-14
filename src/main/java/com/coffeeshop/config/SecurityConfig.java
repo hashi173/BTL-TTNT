@@ -24,7 +24,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                //.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Static resources — public
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
@@ -32,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/menu/**", "/product/**", "/products/**",
                                 "/cart/**", "/checkout/**", "/invoice/**",
                                 "/tracking", "/tracking/**",
-                                "/about", "/careers", "/careers/apply", "/info",
+                                "/about", "/info",
                                 "/register", "/login", "/error").permitAll()
                         // Admin only
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")

@@ -1,15 +1,18 @@
 package com.coffeeshop.controller;
 
 import com.coffeeshop.entity.Product;
-import com.coffeeshop.repository.JobPostingRepository;
 import com.coffeeshop.service.CategoryService;
 import com.coffeeshop.service.ProductService;
+import com.coffeeshop.service.RecommendationService;
 import com.coffeeshop.service.ToppingService;
+import com.coffeeshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,14 +21,26 @@ public class HomeController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ToppingService toppingService;
-    private final JobPostingRepository jobPostingRepository;
+    private final RecommendationService recommendationService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String home(Model model, jakarta.servlet.http.HttpServletRequest request) {
         request.getSession(true); // ensure session exists for CSRF token
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("jobs", jobPostingRepository.findByIsActiveTrueOrderByCreatedAtDesc());
+
+        // Recommendations
+        java.security.Principal principal = request.getUserPrincipal();
+        if (principal != null) {
+            userService.findByUsername(principal.getName()).ifPresent(user -> {
+                List<Product> recommendations = recommendationService.getRecommendations(user.getId());
+                model.addAttribute("recommendations", recommendations);
+            });
+        } else {
+            model.addAttribute("recommendations", recommendationService.getBestSellers());
+        }
+
         return "home";
     }
 

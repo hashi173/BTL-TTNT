@@ -1,10 +1,8 @@
 package com.coffeeshop.config;
 
 import com.coffeeshop.entity.Category;
-import com.coffeeshop.entity.JobPosting;
 import com.coffeeshop.entity.Product;
 import com.coffeeshop.repository.CategoryRepository;
-import com.coffeeshop.repository.JobPostingRepository;
 import com.coffeeshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -24,14 +22,12 @@ public class CatalogMetadataBackfillRunner implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
-    private final JobPostingRepository jobPostingRepository;
 
     @Override
     @Transactional
     public void run(String... args) {
         backfillCategoryCodes();
         backfillProductCodes();
-        backfillJobCodes();
     }
 
     private void backfillCategoryCodes() {
@@ -75,28 +71,6 @@ public class CatalogMetadataBackfillRunner implements CommandLineRunner {
 
         if (!updates.isEmpty()) {
             productRepository.saveAll(updates);
-        }
-    }
-
-    private void backfillJobCodes() {
-        long counter = 0;
-        List<JobPosting> updates = new ArrayList<>();
-        for (JobPosting job : jobPostingRepository.findAll()) {
-            if (!StringUtils.hasText(job.getJobCode())) {
-                counter++;
-                String code;
-                long num = counter;
-                do {
-                    code = String.format("JOB-%06d", num);
-                    num++;
-                } while (jobPostingRepository.findByJobCode(code).isPresent());
-                job.setJobCode(code);
-                updates.add(job);
-            }
-        }
-
-        if (!updates.isEmpty()) {
-            jobPostingRepository.saveAll(updates);
         }
     }
 }

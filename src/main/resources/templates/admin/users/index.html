@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: layout(~{::div})}">
+
+<head>
+    <title>Manage Users - Admin</title>
+</head>
+
+<body>
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">User Management</h4>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Search -->
+        <form method="get" class="mb-4">
+            <div class="input-group" style="max-width: 400px;">
+                <input type="text" name="search" class="form-control" placeholder="Search users..."
+                    th:value="${search}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td class="fw-bold" th:text="${user.username}">admin</td>
+                        <td th:text="${user.fullName}">Admin</td>
+                        <td th:text="${user.email}">admin@example.com</td>
+                        <td th:text="${user.phone}">0901234567</td>
+                        <td>
+                            <span class="badge"
+                                th:classappend="${user.role.name() == 'ADMIN' ? 'bg-danger' : (user.role.name() == 'STAFF' ? 'bg-info' : 'bg-secondary')}"
+                                th:text="${user.role}">USER</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill px-3"
+                                th:classappend="${user.active ? 'bg-success' : 'bg-danger'}"
+                                th:text="${user.active ? 'Active' : 'Inactive'}">Active</span>
+                        </td>
+                        <td class="text-center">
+                            <form th:action="@{/admin/users/{id}/toggle(id=${user.id})}" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm rounded-pill"
+                                    th:classappend="${user.active ? 'btn-outline-warning' : 'btn-outline-success'}"
+                                    th:text="${user.active ? 'Deactivate' : 'Activate'}">Toggle</button>
+                            </form>
+                            <form th:action="@{/admin/users/{id}/reset-password(id=${user.id})}" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill"
+                                    onclick="return confirm('Reset password for this user to 123456?')">
+                                    <i class="fas fa-key me-1"></i>Reset PW
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-3">
+            <nav>
+                <ul class="pagination pagination-sm">
+                    <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1}, search=${search})}">&laquo;</a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage ? 'active' : ''}">
+                        <a class="page-link" th:href="@{/admin/users(page=${i}, search=${search})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1}, search=${search})}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</body>
+
+</html>

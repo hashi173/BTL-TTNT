@@ -81,13 +81,15 @@
                 </li>
 
                 <li>
-                    <a href="/admin/recruitment" class="nav-link">
-                        <i class="fas fa-user-plus me-2"></i> Recruitment
+                    <a href="/admin/users" class="nav-link"
+                        th:classappend="${currentUri == '/admin/users' ? 'active' : ''}">
+                        <i class="fas fa-users me-2"></i> Users
                     </a>
                 </li>
                 <li>
-                    <a href="/admin/recruitment/jobs" class="nav-link">
-                        <i class="fas fa-briefcase me-2"></i> Job Openings
+                    <a href="/admin/ai/dashboard" class="nav-link"
+                        th:classappend="${currentUri == '/admin/ai/dashboard' ? 'active' : ''}">
+                        <i class="fas fa-brain me-2"></i> AI Evaluation
                     </a>
                 </li>
             </ul>

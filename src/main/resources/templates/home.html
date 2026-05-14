@@ -245,6 +245,41 @@
 
 
         <!-- ============================== -->
+        <!-- SECTION: RECOMMENDED FOR YOU   -->
+        <!-- ============================== -->
+        <section th:if="${recommendations != null and !recommendations.empty}" id="recommendations" style="padding: 3rem 0;">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <span class="d-block text-accent text-uppercase letter-spacing-2 fw-bold mb-2">Personalized</span>
+                    <h2 class="display-5 fw-bold" style="color: var(--primary);"
+                        th:text="${#authorization.expression('isAuthenticated()')} ? #{home.recommendations.for_you} : #{home.recommendations.popular}">
+                        Recommended for You</h2>
+                    <p class="lead text-muted" th:text="#{home.recommendations.subtitle}">Handpicked based on your taste.</p>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-6 col-md-4 col-lg-2" th:each="product : ${recommendations}">
+                        <div class="wave-card fade-in-up">
+                            <div class="wave-img-wrapper">
+                                <img th:src="${product.resolvedImagePath}" class="wave-img" th:alt="${product.name}"
+                                    onerror="this.src='/images/no-image.png'">
+                            </div>
+                            <div class="wave-base"></div>
+                            <div class="wave-info">
+                                <h6 class="card-title fw-bold mb-1" th:text="${product.name}">Name</h6>
+                                <span class="product-price fs-6" th:if="${!product.sizes.empty}"
+                                    th:text="${#numbers.formatDecimal(product.sizes[0].price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    55,000 đ</span>
+                                <a th:href="@{'/product/' + ${product.id}}"
+                                    class="btn btn-immersive py-1 px-2 fs-6 mt-1" th:text="#{home.menu.tasteit}">Taste It</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================== -->
         <!-- SECTION 3: MENU (OUR BREWS)    -->
         <!-- ============================== -->
         <section id="menu" class="menu-section" style="padding: 4rem 0 3rem 0;">
@@ -361,139 +396,6 @@
                 <div id="carousel-dots" class="dots-container"></div>
             </div> <!-- Closes container-fluid -->
         </section> <!-- Closes section#menu -->
-
-
-        <!-- ============================== -->
-        <!-- SECTION 4: CAREERS             -->
-        <!-- ============================== -->
-        <section id="careers" class="overflow-hidden position-relative bg-watercolor-stars" style="padding: 4rem 0;">
-            <!-- Watercolor Decoration Spots -->
-            <div class="watercolor-spot bg-spot-blue" style="top: -100px; right: -100px;"></div>
-            <div class="watercolor-spot bg-spot-gold" style="bottom: 10%; left: 5%;"></div>
-
-            <!-- Hero: Team -->
-            <div class="container position-relative z-1 text-center" style="padding: 2rem 0;">
-                <i class="fas fa-users text-secondary mb-3 float-fast" style="font-size: 4rem;"></i>
-                <h2 class="display-3 fw-bold text-primary mb-2" th:text="#{careers.hero}">Grow With Us</h2>
-                <p class="lead text-muted" style="max-width: 600px; margin: 0 auto;"
-                    th:text="#{careers.hero.desc}">Looking for passionate talent.</p>
-            </div>
-
-            <!-- Job Constellation -->
-            <div class="container position-relative z-1 pb-4">
-                <div class="text-center mb-4">
-                    <h3 class="display-5 text-secondary mb-3" th:text="#{careers.jobs}">Active Missions</h3>
-                </div>
-
-                <div th:if="${success}" class="alert alert-success bg-transparent border-success text-white w-50 mx-auto mb-4 text-center backdrop-blur">
-                    <i class="fas fa-check-circle me-2 text-success"></i>
-                    <span th:text="${success}"></span><br>
-                    <strong class="text-warning fs-5 mt-2 d-block" th:text="${trackingCode}"></strong>
-                </div>
-
-                <!-- Paginated Job Cards Container -->
-                <div id="jobCarouselWrapper" class="position-relative py-4">
-                    <!-- Navigation Buttons -->
-                    <div id="jobContainer" class="row justify-content-center g-4 perspective-container">
-                        <div th:each="job : ${jobs}" class="col-12 col-md-6 col-lg-4 d-flex justify-content-center job-item">
-                            <div class="job-star-card float-medium" style="width: 280px; height: 280px; padding: 2.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                                <i class="fas fa-star text-warning mb-3 fs-1"></i>
-                                <h4 class="h4 fw-bold text-white mb-2 fs-1-5x" th:text="${job.title}">Barista</h4>
-                                <p class="text-white-50 mb-3 fs-1-5x">
-                                    <i class="fas fa-map-marker-alt me-1"></i> <span th:text="${job.location}">Location</span>
-                                </p>
-                                <button class="btn btn-outline-light rounded-pill px-4 py-2 fs-1-5x"
-                                    th:data-position="${job.title}" th:data-description="${job.description}"
-                                    onclick="openApplyModal(this.getAttribute('data-position'), this.getAttribute('data-description'))"
-                                    th:text="#{careers.initiate_launch}">Apply</button>
-                            </div>
-                        </div>
-
-                        <div th:if="${#lists.isEmpty(jobs)}" class="col-12 text-center py-4">
-                            <div class="text-white-50">
-                                <i class="fas fa-satellite fa-2x mb-2 float-slow"></i>
-                                <h4>Scanner detects no signals.</h4>
-                                <p>Check back for future transmissions.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Job Carousel Dots & Navigation -->
-                <div id="job-carousel-dots" class="dots-container mt-3"></div>
-                <div class="d-flex justify-content-center gap-3 mt-3">
-                    <button class="btn btn-outline-light rounded-pill px-4" id="jobPrevBtn" onclick="shiftJobCarousel(-1)" style="display:none;">
-                        <i class="fas fa-chevron-left me-1"></i> Prev
-                    </button>
-                    <button class="btn btn-outline-light rounded-pill px-4" id="jobNextBtn" onclick="shiftJobCarousel(1)" style="display:none;">
-                        Next <i class="fas fa-chevron-right ms-1"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Apply Modal -->
-            <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content bg-white text-dark border-0 shadow-lg"
-                        style="background: rgba(255,255,255,0.95);">
-                        <div class="modal-header border-bottom">
-                            <h5 class="modal-title">Apply for: <span id="modalPosition"
-                                    class="text-primary">Position</span></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form th:action="@{/careers/apply}" method="post" enctype="multipart/form-data">
-                            <div class="modal-body">
-                                <div class="mb-3 p-3 rounded bg-light border-start border-4 border-primary">
-                                    <h6 class="text-secondary text-uppercase small letter-spacing-2 mb-2">Role Overview
-                                    </h6>
-                                    <p id="modalDescription" class="mb-0 small text-muted">Job description goes
-                                        here...</p>
-                                </div>
-                                <input type="hidden" name="position" id="positionInput">
-                                <div class="mb-3">
-                                    <label class="form-label text-muted" th:text="#{checkout.fullname}">Full
-                                        Name</label>
-                                    <input type="text" name="fullName" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-muted" th:text="#{careers.email}">Email</label>
-                                    <input type="email" name="email" class="form-control" required
-                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-muted" th:text="#{careers.phone}">Phone</label>
-                                    <input type="tel" name="phone" class="form-control" required
-                                        pattern="0[35789][0-9]{8}">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label text-muted" th:text="#{careers.cv}">CV/Resume</label>
-                                    <input type="file" name="cvFile" class="form-control" accept=".pdf,.doc,.docx"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="modal-footer border-top">
-                                <button type="button" class="btn btn-outline-secondary rounded-pill"
-                                    data-bs-dismiss="modal" th:text="#{careers.cancel}">Cancel</button>
-                                <button type="submit" class="btn btn-primary rounded-pill px-4"
-                                    th:text="#{careers.submit}">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <script>
-                function openApplyModal(position, description) {
-                    var modalEl = document.getElementById('applyModal');
-                    if (!modalEl) return;
-                    document.getElementById('modalPosition').textContent = position;
-                    document.getElementById('positionInput').value = position;
-                    document.getElementById('modalDescription').textContent = description;
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        new bootstrap.Modal(modalEl).show();
-                    }
-                }
-            </script>
-        </section>
 
 
         <!-- ============================== -->
@@ -645,75 +547,6 @@
                 updateCarouselView(0, items, itemsPerPage);
             }
 
-            // ── Job Carousel ──────────────────────────────────────────────
-            var currentJobPage = 0;
-
-            function updateJobCarouselView(pageIndex) {
-                const container = document.getElementById('jobContainer');
-                if (!container) return;
-                const items = container.querySelectorAll('.job-item');
-                const itemsPerPage = (window.innerWidth < 768) ? 1 : 3;
-                const totalPages = Math.ceil(items.length / itemsPerPage);
-                if (totalPages === 0) return;
-
-                items.forEach(function(item, index) {
-                    const start = pageIndex * itemsPerPage;
-                    const end = start + itemsPerPage;
-                    if (index >= start && index < end) {
-                        item.classList.remove('d-none');
-                        item.classList.add('d-flex');
-                    } else {
-                        item.classList.remove('d-flex');
-                        item.classList.add('d-none');
-                    }
-                });
-
-                document.querySelectorAll('#job-carousel-dots .dot').forEach(function(dot, idx) {
-                    dot.classList.toggle('active', idx === pageIndex);
-                });
-
-                const prevBtn = document.getElementById('jobPrevBtn');
-                const nextBtn = document.getElementById('jobNextBtn');
-                if (prevBtn) prevBtn.style.display = totalPages > 1 ? '' : 'none';
-                if (nextBtn) nextBtn.style.display = totalPages > 1 ? '' : 'none';
-            }
-
-            function shiftJobCarousel(direction) {
-                const container = document.getElementById('jobContainer');
-                if (!container) return;
-                const items = container.querySelectorAll('.job-item');
-                const itemsPerPage = (window.innerWidth < 768) ? 1 : 3;
-                const totalPages = Math.ceil(items.length / itemsPerPage);
-                if (totalPages === 0) return;
-                currentJobPage = (currentJobPage + direction + totalPages) % totalPages;
-                updateJobCarouselView(currentJobPage);
-            }
-
-            function initJobCarousel() {
-                const container = document.getElementById('jobContainer');
-                const dotsContainer = document.getElementById('job-carousel-dots');
-                if (!container || !dotsContainer) return;
-
-                const items = container.querySelectorAll('.job-item');
-                if (items.length === 0) return;
-
-                const itemsPerPage = (window.innerWidth < 768) ? 1 : 3;
-                const totalPages = Math.ceil(items.length / itemsPerPage);
-
-                currentJobPage = 0;
-                dotsContainer.innerHTML = '';
-                for (let i = 0; i < totalPages; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'dot' + (i === 0 ? ' active' : '');
-                    dot.onclick = () => {
-                        currentJobPage = i;
-                        updateJobCarouselView(i);
-                    };
-                    dotsContainer.appendChild(dot);
-                }
-                updateJobCarouselView(0);
-            }
-
             document.addEventListener('DOMContentLoaded', function () {
                 const style = document.createElement('style');
                 style.textContent = `
@@ -742,8 +575,7 @@
                 document.head.appendChild(style);
 
                 initCarousel();
-                initJobCarousel();
-                
+
                 document.body.addEventListener('htmx:afterSwap', function(evt) {
                     if (evt.detail.target.id === 'productContainer') {
                         initCarousel();
@@ -755,7 +587,6 @@
 
                 window.addEventListener('resize', function() {
                     initCarousel();
-                    initJobCarousel();
                 });
             });
         </script>

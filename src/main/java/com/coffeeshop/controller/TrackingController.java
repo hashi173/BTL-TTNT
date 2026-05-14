@@ -17,7 +17,6 @@ public class TrackingController {
 
     private final OrderRepository orderRepository;
     private final OrderService orderService;
-    private final com.coffeeshop.repository.JobApplicationRepository jobApplicationRepository;
     private final org.springframework.context.MessageSource messageSource;
 
     @GetMapping
@@ -25,7 +24,6 @@ public class TrackingController {
         return "tracking/index";
     }
 
-    /** Searches by tracking code — resolves to either an Order or a Job Application. */
     @GetMapping("/search")
     public String trackOrder(@RequestParam("code") String code, Model model, java.util.Locale locale) {
         Order order = orderRepository.findByTrackingCode(code.trim()).orElse(null);
@@ -33,19 +31,12 @@ public class TrackingController {
         if (order != null) {
             model.addAttribute("order", order);
         } else {
-            com.coffeeshop.entity.JobApplication application = jobApplicationRepository
-                    .findByTrackingCode(code.trim()).orElse(null);
-            if (application != null) {
-                model.addAttribute("jobApplication", application);
-            } else {
-                String errorMsg = messageSource.getMessage("error.order_not_found", new Object[]{code}, locale);
-                model.addAttribute("error", errorMsg);
-            }
+            String errorMsg = messageSource.getMessage("error.order_not_found", new Object[]{code}, locale);
+            model.addAttribute("error", errorMsg);
         }
         return "tracking/index";
     }
 
-    /** Cancels a PENDING order. Validates tracking code ownership before modifying. */
     @org.springframework.web.bind.annotation.PostMapping("/cancel")
     public String cancelOrder(@RequestParam("orderId") java.util.UUID orderId,
             @RequestParam("trackingCode") String trackingCode,

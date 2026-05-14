@@ -30,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final com.coffeeshop.repository.ProductRepository productRepository;
+    private final RecommendationService recommendationService;
 
     @Transactional
     public Order placeOrder(Cart cart, User user, String customerName, String phone, String address, String note) {
@@ -69,6 +70,11 @@ public class OrderService {
             }
 
             orderItemRepository.save(detail);
+        }
+
+        // Evict recommendation cache for this user
+        if (user != null) {
+            recommendationService.evictCacheForUser(user.getId());
         }
 
         return savedOrder;
@@ -248,5 +254,10 @@ public class OrderService {
     /** Alias of {@link #countTotalOrders()} for view compatibility. */
     public long getTotalOrders() {
         return countTotalOrders();
+    }
+
+    public org.springframework.data.domain.Page<Order> getOrdersByUserPaginated(java.util.UUID userId,
+            org.springframework.data.domain.Pageable pageable) {
+        return orderRepository.findByUser_IdOrderByCreatedAtDesc(userId, pageable);
     }
 }

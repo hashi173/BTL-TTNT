@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<head>
+    <title>My Profile - Hashiji Cafe</title>
+</head>
+
+<body>
+    <div th:fragment="content" class="container py-5 mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold" style="color: var(--primary);">My Profile</h2>
+                    <p class="text-muted">Manage your account information.</p>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success rounded-3" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <form th:action="@{/profile}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Username</label>
+                                <input type="text" class="form-control form-control-lg" th:value="${user.username}"
+                                    disabled>
+                                <small class="text-muted">Username cannot be changed.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label fw-bold">Full Name</label>
+                                <input type="text" class="form-control form-control-lg" id="fullName" name="fullName"
+                                    th:value="${user.fullName}" placeholder="Enter your full name">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email"
+                                    th:value="${user.email}" placeholder="Enter your email">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label fw-bold">Phone</label>
+                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone"
+                                    th:value="${user.phone}" placeholder="Enter your phone number"
+                                    pattern="0[35789][0-9]{8}">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mt-3">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/my-orders" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="fas fa-box me-2"></i> View My Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

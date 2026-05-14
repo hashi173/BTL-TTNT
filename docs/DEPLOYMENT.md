@@ -160,16 +160,16 @@ sudo -u postgres psql
 
 ```sql
 -- Tạo database
-CREATE DATABASE cafe_db;
+CREATE DATABASE cafe_db_ttnt;
 
 -- Tạo user
 CREATE USER cafe_admin WITH ENCRYPTED PASSWORD '123';
 
 -- Cấp quyền cho user
-GRANT ALL PRIVILEGES ON DATABASE cafe_db TO cafe_admin;
+GRANT ALL PRIVILEGES ON DATABASE cafe_db_ttnt TO cafe_admin;
 
 -- Chuyển sang database vừa tạo để cấp quyền schema
-\c cafe_db
+\c cafe_db_ttnt
 
 -- Cấp quyền trên schema public
 GRANT ALL ON SCHEMA public TO cafe_admin;
@@ -183,7 +183,7 @@ GRANT ALL ON SCHEMA public TO cafe_admin;
 1. Mở **pgAdmin 4**
 2. Kết nối đến PostgreSQL server (localhost, port 5432)
 3. Click chuột phải vào **Databases** → **Create** → **Database...**
-   - Database name: `cafe_db`
+   - Database name: `cafe_db_ttnt`
    - Owner: `postgres`
    - Nhấn **Save**
 4. Click chuột phải vào **Login/Group Roles** → **Create** → **Login/Group Role...**
@@ -191,7 +191,7 @@ GRANT ALL ON SCHEMA public TO cafe_admin;
    - Tab **Definition**: Password = `123`
    - Tab **Privileges**: Bật **Can login**
    - Nhấn **Save**
-5. Chọn database `cafe_db` → Mở **Query Tool** → Chạy:
+5. Chọn database `cafe_db_ttnt` → Mở **Query Tool** → Chạy:
 
 ```sql
 GRANT ALL ON SCHEMA public TO cafe_admin;
@@ -218,7 +218,7 @@ Nếu cần thay đổi (ví dụ port khác, password khác), đặt biến mô
 **Windows (PowerShell):**
 
 ```powershell
-$env:DB_URL = "jdbc:postgresql://localhost:5432/cafe_db"
+$env:DB_URL = "jdbc:postgresql://localhost:5432/cafe_db_ttnt"
 $env:DB_USERNAME = "cafe_admin"
 $env:DB_PASSWORD = "your_password"
 ```
@@ -226,7 +226,7 @@ $env:DB_PASSWORD = "your_password"
 **macOS / Linux:**
 
 ```bash
-export DB_URL="jdbc:postgresql://localhost:5432/cafe_db"
+export DB_URL="jdbc:postgresql://localhost:5432/cafe_db_ttnt"
 export DB_USERNAME="cafe_admin"
 export DB_PASSWORD="your_password"
 ```
@@ -326,7 +326,7 @@ ALTER USER cafe_admin WITH PASSWORD '123';
 \q
 ```
 
-### Lỗi: `FATAL: database "cafe_db" does not exist`
+### Lỗi: `FATAL: database "cafe_db_ttnt" does not exist`
 
 **Nguyên nhân:** Database chưa được tạo.
 

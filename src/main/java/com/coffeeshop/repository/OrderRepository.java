@@ -78,4 +78,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             "o.status = :status")
     Page<Order> searchOrdersAndStatusPaginated(@Param("keyword") String keyword,
             @Param("status") OrderStatus status, Pageable pageable);
+
+    Page<Order> findByUser_IdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
 }
