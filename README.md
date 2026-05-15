@@ -105,6 +105,7 @@ src/main/resources/
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Docker Guide](docs/DOCKER_GUIDE.md)
 - [AI System](docs/AI-SYSTEM.md)
+- [AI Crash Course (Hướng dẫn Báo cáo Dành cho SV)](docs/AI-CRASH-COURSE.md)
 
 ---
 
