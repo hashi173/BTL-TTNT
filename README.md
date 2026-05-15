@@ -106,6 +106,7 @@ src/main/resources/
 - [Docker Guide](docs/DOCKER_GUIDE.md)
 - [AI System](docs/AI-SYSTEM.md)
 - [AI Crash Course (Hướng dẫn Báo cáo Dành cho SV)](docs/AI-CRASH-COURSE.md)
+- [Giải Mã Thuật Toán AI (Toán học & Logic)](docs/AI-ALGORITHM-EXPLAINED.md)
 
 ---
 
