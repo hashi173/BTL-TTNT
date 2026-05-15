@@ -21,8 +21,7 @@ A full-stack coffee shop ordering and admin management platform built with **Jav
 
 ### AI Recommendation Module
 - **Hybrid recommendations:** Collaborative Filtering + Rule-based fallback for cold start users.
-- **Text AI utilities:** TF-IDF text similarity and Naive Bayes category classification.
-- **Evaluation dashboard:** Precision, Recall, F1, Hit Rate, MAP, baselines, ablation studies, and confusion matrix.
+- **Cross-selling:** "You may also like" suggestions based on co-occurrence and category fallback.
 - **Demo seeding:** `DataSeeder.java` creates 50 products, 30 users, and 10 months of synthetic order history for repeatable demos.
 
 ### Persistence & Security
@@ -103,16 +102,9 @@ src/main/resources/
 
 ## Documentation
 
-- [API Reference](docs/LTW/api_reference.md)
-- [Postman Guide](docs/LTW/postman_guide.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Docker Guide](docs/DOCKER_GUIDE.md)
-- [Database Schema](docs/LTW/database.md)
-- [Defense Script](docs/LTW/defense_script.md)
 - [AI System](docs/AI-SYSTEM.md)
-- [AI Demo Scenario](docs/AI-DEMO-SCENARIO.md)
-- [AI Defense Q&A](docs/AI-DEFENSE-QA.md)
-- [AI Team Guide](docs/AI-TEAM-GUIDE.md)
 
 ---
 

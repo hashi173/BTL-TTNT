@@ -207,12 +207,6 @@ public class OrderService {
         return orderRepository.findTopSellingProducts(org.springframework.data.domain.PageRequest.of(0, 5));
     }
 
-    public List<Object[]> getTopSellingProductsCurrentMonth() {
-        java.time.LocalDate now = java.time.LocalDate.now();
-        return orderRepository.findTopSellingProductByMonth(now.getMonthValue(), now.getYear(),
-                org.springframework.data.domain.PageRequest.of(0, 5));
-    }
-
 
 
     public org.springframework.data.domain.Page<Order> getAllOrdersPaginated(

@@ -244,40 +244,6 @@
         </section>
 
 
-        <!-- ============================== -->
-        <!-- SECTION: RECOMMENDED FOR YOU   -->
-        <!-- ============================== -->
-        <section th:if="${recommendations != null and !recommendations.empty}" id="recommendations" style="padding: 3rem 0;">
-            <div class="container">
-                <div class="text-center mb-4">
-                    <span class="d-block text-accent text-uppercase letter-spacing-2 fw-bold mb-2">Personalized</span>
-                    <h2 class="display-5 fw-bold" style="color: var(--primary);"
-                        th:text="${#authorization.expression('isAuthenticated()')} ? #{home.recommendations.for_you} : #{home.recommendations.popular}">
-                        Recommended for You</h2>
-                    <p class="lead text-muted" th:text="#{home.recommendations.subtitle}">Handpicked based on your taste.</p>
-                </div>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-6 col-md-4 col-lg-2" th:each="product : ${recommendations}">
-                        <div class="wave-card fade-in-up">
-                            <div class="wave-img-wrapper">
-                                <img th:src="${product.resolvedImagePath}" class="wave-img" th:alt="${product.name}"
-                                    onerror="this.src='/images/no-image.png'">
-                            </div>
-                            <div class="wave-base"></div>
-                            <div class="wave-info">
-                                <h6 class="card-title fw-bold mb-1" th:text="${product.name}">Name</h6>
-                                <span class="product-price fs-6" th:if="${!product.sizes.empty}"
-                                    th:text="${#numbers.formatDecimal(product.sizes[0].price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
-                                    55,000 đ</span>
-                                <a th:href="@{'/product/' + ${product.id}}"
-                                    class="btn btn-immersive py-1 px-2 fs-6 mt-1" th:text="#{home.menu.tasteit}">Taste It</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
 
         <!-- ============================== -->
         <!-- SECTION 3: MENU (OUR BREWS)    -->
@@ -396,6 +362,41 @@
                 <div id="carousel-dots" class="dots-container"></div>
             </div> <!-- Closes container-fluid -->
         </section> <!-- Closes section#menu -->
+        <!-- ============================== -->
+        <!-- SECTION: RECOMMENDED FOR YOU   -->
+        <!-- ============================== -->
+        <section th:if="${recommendations != null and !recommendations.empty}" id="recommendations" class="bg-white shadow-sm" style="padding: 4rem 0; margin-top: 2rem; border-radius: 2rem; margin-left: 1rem; margin-right: 1rem;">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <span class="d-block text-accent text-uppercase letter-spacing-2 fw-bold mb-2"
+                          th:text="${#authorization.expression('isAuthenticated()')} ? 'Personalized' : 'Trending'">Personalized</span>
+                    <h2 class="display-5 fw-bold" style="color: var(--primary);"
+                        th:text="${#authorization.expression('isAuthenticated()')} ? #{home.recommendations.for_you} : 'Best Sellers'">
+                        Recommended for You</h2>
+                    <p class="lead text-muted" 
+                       th:text="${#authorization.expression('isAuthenticated()')} ? #{home.recommendations.subtitle} : 'Our most popular and highly rated brews.'">Handpicked based on your taste.</p>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-6 col-md-4 col-lg-2" th:each="product : ${recommendations}">
+                        <div class="wave-card fade-in-up">
+                            <div class="wave-img-wrapper">
+                                <img th:src="${product.resolvedImagePath}" class="wave-img" th:alt="${product.name}"
+                                    onerror="this.src='/images/no-image.png'">
+                            </div>
+                            <div class="wave-base"></div>
+                            <div class="wave-info">
+                                <h6 class="card-title fw-bold mb-1" th:text="${product.name}">Name</h6>
+                                <span class="product-price fs-6" th:if="${!product.sizes.empty}"
+                                    th:text="${#numbers.formatDecimal(product.sizes[0].price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    55,000 đ</span>
+                                <a th:href="@{'/product/' + ${product.id}}"
+                                    class="btn btn-immersive py-1 px-2 fs-6 mt-1" th:text="#{home.menu.tasteit}">Taste It</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
         <!-- ============================== -->

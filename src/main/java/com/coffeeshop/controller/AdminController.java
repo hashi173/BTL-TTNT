@@ -54,8 +54,8 @@ public class AdminController {
             revenueAmounts.add(0.0);
         }
 
-        // --- Top Products This Month ---
-        List<Object[]> topProducts = orderService.getTopSellingProductsCurrentMonth();
+        // --- Top Products (All Time) ---
+        List<Object[]> topProducts = orderService.getTopSellingProducts();
         List<String> productNames = new ArrayList<>();
         List<Long> productQuantities = new ArrayList<>();
         List<String> productImages = new ArrayList<>();

@@ -9,6 +9,7 @@ import com.coffeeshop.service.ProductService;
 import com.coffeeshop.service.ToppingService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import com.coffeeshop.service.RecommendationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,19 @@ public class CartController {
     private final CartService cartService;
     private final ProductService productService;
     private final ToppingService toppingService;
+    private final RecommendationService recommendationService;
 
     @GetMapping
     public String viewCart(HttpSession session, Model model) {
-        model.addAttribute("cart", cartService.getCart(session));
+        com.coffeeshop.dto.Cart cart = cartService.getCart(session);
+        model.addAttribute("cart", cart);
+        
+        if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
+            CartItem lastItem = cart.getItems().get(cart.getItems().size() - 1);
+            List<Product> crossSelling = recommendationService.getCrossSellingRecommendations(lastItem.getProductId());
+            model.addAttribute("crossSellingProducts", crossSelling);
+        }
+        
         return "cart/index";
     }
 

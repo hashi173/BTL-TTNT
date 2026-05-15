@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
 
 
-    @Query("SELECT i.snapshotProductName, SUM(i.quantity) FROM OrderItem i JOIN i.order o WHERE o.status = com.coffeeshop.entity.OrderStatus.COMPLETED GROUP BY i.snapshotProductName ORDER BY SUM(i.quantity) DESC")
+    @Query("SELECT i.snapshotProductName, SUM(i.quantity), MAX(p.image) FROM OrderItem i JOIN i.order o LEFT JOIN i.product p WHERE o.status = com.coffeeshop.entity.OrderStatus.COMPLETED GROUP BY i.snapshotProductName ORDER BY SUM(i.quantity) DESC")
     List<Object[]> findTopSellingProducts(Pageable pageable);
 
     @Query("SELECT YEAR(o.createdAt) as year, MONTH(o.createdAt) as month, SUM(o.totalAmount) as total FROM Order o WHERE o.status = com.coffeeshop.entity.OrderStatus.COMPLETED GROUP BY YEAR(o.createdAt), MONTH(o.createdAt) ORDER BY year DESC, month DESC")

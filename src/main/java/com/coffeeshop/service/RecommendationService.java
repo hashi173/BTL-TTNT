@@ -21,16 +21,21 @@ import java.util.stream.Collectors;
  * ═══════════════════════════════════════════════════════════════
  *
  * 1. Collaborative Filtering (CF) - Trọng số 0.6:
- *    - Xây dựng ma trận User-Product từ đơn hàng đã hoàn thành
+ *    - Mục đích: Gợi ý sản phẩm dựa trên hành vi của nhiều người dùng có sở thích tương đồng.
  *    - Tính Cosine Similarity giữa các cặp user
- *    - KNN (K=5): tìm 5 user tương tự nhất
+ *    - KNN (K=5): chọn K người dùng gần nhất (giống nhất)
  *    - Dự đoán điểm cho sản phẩm chưa mua
  *
  * 2. Rule-based (RB) - Trọng số 0.4:
- *    - Cold Start: user mới → sản phẩm bán chạy
- *    - Returning User: tăng điểm sản phẩm mua thường xuyên
+ *    - Xử lý các ngoại lệ và bổ sung độ chính xác.
+ *    - User mới (Cold Start): tự động gợi ý các sản phẩm Best Seller.
+ *    - User cũ (Returning User): ưu tiên gợi ý lại món đã từng order nhiều lần/rating cao.
  *
- * 3. Kết hợp: finalScore = 0.6 × CF + 0.4 × RB
+ * 3. Kết hợp: Tính final score = 0.6 × CF + 0.4 × RB
+ *
+ * 4. Cross-selling: 
+ *    - "Bạn có thể cũng thích" (Gợi ý thêm 3 sản phẩm khi người dùng thêm vào giỏ hàng).
+ *    - Ưu tiên sản phẩm thường được mua cùng, nếu thiếu sẽ fallback về cùng danh mục.
  *
  * ═══════════════════════════════════════════════════════════════
  * CACHING
@@ -158,6 +163,93 @@ public class RecommendationService {
         }
 
         return result;
+    }
+
+    /**
+     * Gợi ý Cross-selling (Bán chéo)
+     * "Bạn có thể cũng thích" - Gợi ý thêm khoảng 3 món khi thêm một món vào giỏ hàng.
+     * Sử dụng dữ liệu những người từng mua sản phẩm này cũng mua sản phẩm nào khác.
+     */
+    public List<Product> getCrossSellingRecommendations(UUID productId) {
+        ensureMatricesBuilt();
+        
+        // Find users who bought this product
+        List<UUID> usersWhoBought = new ArrayList<>();
+        if (userProductMatrix != null) {
+            for (Map.Entry<UUID, Map<UUID, Double>> entry : userProductMatrix.entrySet()) {
+                if (entry.getValue().containsKey(productId)) {
+                    usersWhoBought.add(entry.getKey());
+                }
+            }
+        }
+        
+        // If not enough data, fallback to category-based or best sellers
+        if (usersWhoBought.size() < 2) {
+            return getFallbackCrossSelling(productId);
+        }
+        
+        // Aggregate what else they bought
+        Map<UUID, Double> coOccurrenceScores = new HashMap<>();
+        for (UUID uid : usersWhoBought) {
+            Map<UUID, Double> ratings = userProductMatrix.get(uid);
+            for (Map.Entry<UUID, Double> rating : ratings.entrySet()) {
+                UUID otherProductId = rating.getKey();
+                if (!otherProductId.equals(productId)) {
+                    coOccurrenceScores.merge(otherProductId, rating.getValue(), Double::sum);
+                }
+            }
+        }
+        
+        if (coOccurrenceScores.isEmpty()) {
+             return getFallbackCrossSelling(productId);
+        }
+        
+        // Sort by score descending
+        List<UUID> recommendedIds = coOccurrenceScores.entrySet().stream()
+                .sorted(Map.Entry.<UUID, Double>comparingByValue().reversed())
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+                
+        List<Product> allProducts = productRepository.findAllWithDetails();
+        Map<UUID, Product> productMap = allProducts.stream()
+                .collect(Collectors.toMap(Product::getId, p -> p));
+                
+        List<Product> results = recommendedIds.stream()
+                .map(productMap::get)
+                .filter(Objects::nonNull)
+                .filter(Product::isAvailable)
+                .collect(Collectors.toList());
+
+        // Fill up to 3 if we didn't find enough
+        if (results.size() < 3) {
+             List<Product> fallbacks = getFallbackCrossSelling(productId);
+             for (Product p : fallbacks) {
+                 if (!results.contains(p) && results.size() < 3) {
+                     results.add(p);
+                 }
+             }
+        }
+
+        return results;
+    }
+
+    private List<Product> getFallbackCrossSelling(UUID productId) {
+        Product currentProduct = productRepository.findById(productId).orElse(null);
+        if (currentProduct == null || currentProduct.getCategory() == null) {
+            return getBestSellers().stream().limit(3).collect(Collectors.toList());
+        }
+        
+        UUID categoryId = currentProduct.getCategory().getId();
+        
+        List<Product> categoryProducts = productRepository.findAllWithDetails().stream()
+                .filter(p -> p.getCategory() != null && p.getCategory().getId().equals(categoryId))
+                .filter(p -> !p.getId().equals(productId))
+                .filter(Product::isAvailable)
+                .collect(Collectors.toList());
+                
+        Collections.shuffle(categoryProducts);
+        return categoryProducts.stream().limit(3).collect(Collectors.toList());
     }
 
     @CacheEvict(value = "recommendations", key = "#userId")

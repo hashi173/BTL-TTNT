@@ -1,226 +1,60 @@
-# Hệ thống AI - Hashiji Café
+# Tài liệu Hệ thống AI - Hashiji Café
 
-## Mục lục
-1. [Tổng quan kiến trúc](#1-tổng-quan-kiến-trúc)
-2. [Hệ thống gợi ý sản phẩm](#2-hệ-thống-gợi-ý-sản-phẩm)
-3. [Các thuật toán AI sử dụng](#3-các-thuật-toán-ai-sử-dụng)
-4. [Đánh giá hiệu suất](#4-đánh-giá-hiệu-suất)
-5. [Baseline & Ablation Study](#5-baseline--ablation-study)
-6. [Cài đặt và cấu hình](#6-cài-đặt-và-cấu-hình)
+## 1. Tổng quan hệ thống
+Hệ thống Hashiji Café được xây dựng với mục tiêu tích hợp trí tuệ nhân tạo (AI) để gợi ý sản phẩm, giúp tăng trải nghiệm người dùng và doanh số bán hàng.
 
----
-
-## 1. Tổng quan kiến trúc
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Hashiji Café AI System                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
-│  │  Recommendation   │  │  Text Similarity  │  │ Naive Bayes  │  │
-│  │  Engine           │  │  (TF-IDF + Cos)   │  │ Classifier   │  │
-│  │  CF + Rule-based  │  │                   │  │              │  │
-│  └────────┬─────────┘  └────────┬─────────┘  └──────┬───────┘  │
-│           │                     │                    │          │
-│  ┌────────┴─────────────────────┴────────────────────┴───────┐  │
-│  │              Evaluation Engine                             │  │
-│  │  • Leave-One-Out Cross-Validation                         │  │
-│  │  • Precision, Recall, F1, Hit Rate, MAP                   │  │
-│  │  • Baseline Comparison (Random, Popularity)               │  │
-│  │  • Ablation Study (Weights, K)                            │  │
-│  │  • Confusion Matrix (Naive Bayes)                         │  │
-│  │  • Precision-Recall Curve, F1@K Curve                     │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────────┐  ┌──────────────────┐                    │
-│  │ Synthetic Data    │  │ Baseline          │                    │
-│  │ Generator         │  │ Recommender       │                    │
-│  │ (100-500 users)   │  │ (Random, Popular) │                    │
-│  └──────────────────┘  └──────────────────┘                    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Cấu trúc thư mục
-
-```
-src/main/java/com/coffeeshop/
-├── service/
-│   ├── RecommendationService.java      # Hệ thống gợi ý chính (CF + RB)
-│   └── ai/
-│       ├── TextSimilarityService.java   # TF-IDF + Cosine Similarity
-│       ├── NaiveBayesClassifier.java    # Naive Bayes classifier
-│       ├── RecommendationEvaluator.java # Đánh giá hiệu suất
-│       ├── BaselineRecommender.java     # Baseline (Random, Popularity)
-│       └── SyntheticDataGenerator.java  # Tạo dữ liệu tổng hợp
-├── controller/
-│   └── AdminAIController.java          # Admin AI Dashboard + API
-```
+### Các tính năng chính của hệ thống
+- **Người dùng (User)**: Đăng ký, đăng nhập, quản lý hồ sơ (username, địa chỉ), xem menu (menu chung và danh sách được gợi ý riêng), đặt đồ, theo dõi đơn hàng (tracking order), xem lại danh sách tóm tắt các đơn từng đặt (bao gồm mã code, thời gian, món, tiền, và trạng thái đơn hàng như đang chờ duyệt, đang vận chuyển, thành công).
+- **Quản trị viên (Admin)**: Đăng nhập, quản lý người dùng, quản lý sản phẩm, quản lý đơn hàng, xem thống kê. Admin chỉ tập trung vào nghiệp vụ quản lý bán hàng và báo cáo tài chính, không yêu cầu các chức năng theo dõi thuật toán AI.
 
 ---
 
-## 2. Hệ thống gợi ý sản phẩm
+## 2. Giao diện và Luồng hoạt động (UI/UX)
+Hệ thống hiển thị kết quả của thuật toán AI trên giao diện người dùng theo các quy tắc sau:
 
-### 2.1 Collaborative Filtering (CF) - Trọng số 0.6
-
-**Nguyên lý:** Người dùng tương tự nhau sẽ thích sản phẩm tương tự.
-
-```
-Bước 1: Xây dựng ma trận User-Product từ đơn hàng đã hoàn thành
-         ┌─────────┬───────┬───────┬───────┬───────┐
-         │         │ Prod1 │ Prod2 │ Prod3 │ Prod4 │
-         ├─────────┼───────┼───────┼───────┼───────┤
-         │ User A  │  1.0  │  0.5  │   0   │   0   │
-         │ User B  │  0.8  │   0   │  0.3  │   0   │
-         │ User C  │   0   │  0.7  │  0.6  │  1.0  │
-         └─────────┴───────┴───────┴───────┴───────┘
-
-Bước 2: Normalize (chia cho max → 0-1 scale)
-Bước 3: Tính Cosine Similarity giữa các cặp user
-Bước 4: KNN (K=5) - Tìm 5 user tương tự nhất
-Bước 5: Dự đoán điểm cho sản phẩm chưa mua
-```
-
-### 2.2 Rule-based Recommendation (RB) - Trọng số 0.4
-
-- **Cold Start:** User mới → sản phẩm bán chạy nhất
-- **Returning User:** Tăng điểm cho sản phẩm mua thường xuyên
-
-### 2.3 Kết hợp
-
-```
-finalScore = 0.6 × CF + 0.4 × RB
-```
+- **Bố cục trang Menu**: 
+  - Phần Menu danh sách toàn bộ sản phẩm sẽ được đặt ở phía trên.
+  - Phần "Gợi ý cho bạn" (Recommended for you) sẽ được đặt ở phía dưới.
+- **Người dùng mới (New User)**: 
+  - Do người dùng mới tinh chưa có lịch sử mua hàng để phân tích, mục gợi ý sẽ không hiển thị "Dựa trên sở thích của bạn" mà thay bằng **"Best Seller"** (Các sản phẩm bán chạy nhất).
+- **Gợi ý Cross-selling (Bán chéo)**: 
+  - Khi người dùng thêm một món cụ thể vào giỏ hàng, hệ thống sẽ hiển thị một popup nhỏ gợi ý thêm khoảng 3 món với tiêu đề **"Bạn có thể cũng thích"** (You may also like) để kích thích mua sắm.
 
 ---
 
-## 3. Các thuật toán AI sử dụng
+## 3. Kiến trúc Thuật toán Gợi ý
+Hệ thống chỉ tập trung vào việc **recommend (gợi ý) sản phẩm cho người dùng**. Logic của hệ gợi ý được viết bằng backend, không sử dụng các model bên ngoài. Thuật toán là sự kết hợp (hybrid) giữa hai phương pháp chính.
 
-### 3.1 Cosine Similarity
+### 3.1. Thuật toán chính: Collaborative Filtering (Lọc cộng tác)
+- **Mục đích**: Gợi ý sản phẩm dựa trên hành vi của nhiều người dùng có sở thích tương đồng.
+- **Điều kiện hoạt động**: Người dùng đã có dữ liệu mua hàng trên hệ thống.
+- **Các thuật toán áp dụng**:
+  1. **Cosine Similarity**: Dùng để so sánh và tính toán độ giống nhau giữa các người dùng (dựa trên lịch sử mua các món giống nhau).
+  2. **K-Nearest Neighbors (KNN)**: Sau khi tính toán độ tương đồng bằng Cosine Similarity, hệ thống sử dụng KNN để chọn ra $K$ người dùng gần nhất (giống nhất) để làm cơ sở gợi ý các sản phẩm mà họ đã mua cho người dùng hiện tại.
+- **Ví dụ thực tế**: Người dùng A từng mua Cafe và Matcha. Các người dùng B, C, D cũng từng mua Cafe và Matcha, nhưng họ còn mua thêm Mocha và Trà. Hệ thống sẽ chọn B, C, D (những người giống A nhất) và từ lịch sử của họ, hệ thống đưa ra kết quả gợi ý Mocha hoặc Trà cho A.
 
-```
-cos(θ) = (A · B) / (|A| × |B|)
+### 3.2. Thuật toán bổ trợ: Rule-based Recommendation (Gợi ý dựa trên tập luật)
+- **Mục đích**: Tự đặt ra các quy tắc (rule) cho hệ thống để xử lý các ngoại lệ của thuật toán Lọc cộng tác và bổ sung độ chính xác.
+- **Các tập luật**:
+  - **Luật 1 (Dành cho User mới)**: Nếu là tài khoản mới chưa có lịch sử, tự động gợi ý các sản phẩm **Best Seller** (Bán chạy nhất).
+  - **Luật 2 (Dựa trên lịch sử cá nhân)**: Gợi ý theo lịch sử mua hàng của chính người đó, ưu tiên gợi ý lại những món mà người đó đã từng order nhiều lần hoặc có điểm rating cao.
 
-Ứng dụng: So sánh user vectors, so sánh text vectors
-Kết quả: 0.0 (hoàn toàn khác) → 1.0 (hoàn toàn giống)
-```
-
-### 3.2 TF-IDF (Term Frequency - Inverse Document Frequency)
-
-```
-TF(t, d) = số lần t xuất hiện trong d / tổng số từ trong d
-IDF(t) = log(N / df(t)) + 1
-TF-IDF(t, d) = TF(t, d) × IDF(t)
-
-Ứng dụng: Tìm sản phẩm liên quan nhất đến query
-```
-
-### 3.3 Naive Bayes Classifier
-
-```
-P(Class | Features) = P(Features | Class) × P(Class) / P(Features)
-
-Giả định "Naive": Các từ độc lập khi cho trước lớp
-Laplace Smoothing: P(word|class) = (count + 1) / (total + |V|)
-Log-probabilities để tránh underflow
-
-Ứng dụng: Phân loại sản phẩm vào category
-```
+### 3.3. Cách kết hợp kết quả (Hybrid Approach)
+Hệ thống tạo ra danh sách gợi ý cuối cùng qua các bước:
+1. Tính điểm gợi ý (Recommendation Score) từ thuật toán Collaborative Filtering.
+2. Tính điểm gợi ý từ tập luật Rule-based Recommendation.
+3. Áp dụng hệ số tính toán (Weight - Trọng số) cho mỗi kết quả (ví dụ CF chiếm 60%, Rule-based chiếm 40%).
+4. Tổng hợp điểm số, sắp xếp và tạo danh sách sản phẩm gợi ý cuối cùng trả về cho người dùng.
 
 ---
 
-## 4. Đánh giá hiệu suất
+## 4. Kế hoạch Thực nghiệm và Đánh giá 
+*(Mục này dành cho báo cáo và slide bảo vệ, không đưa vào giao diện hệ thống)*
 
-### 4.1 Các chỉ số
-
-| Chỉ số | Công thức | Ý nghĩa |
-|--------|-----------|----------|
-| **Precision@K** | \|recommended ∩ relevant\| / K | Trong K gợi ý, bao nhiêu % đúng? |
-| **Recall@K** | \|recommended ∩ relevant\| / \|relevant\| | Bao nhiêu % sản phẩm liên quan được gợi ý? |
-| **F1-Score** | 2 × (P × R) / (P + R) | Cân bằng Precision và Recall |
-| **Hit Rate** | users with hits / total users | Bao nhiêu % user có ≥1 gợi ý đúng? |
-| **MAP@K** | mean(1/rank for each hit) | Độ chính xác có xét thứ tự |
-
-### 4.2 Leave-One-Out Cross-Validation
-
-```
-Với mỗi user có ≥2 sản phẩm:
-1. Ẩn 1 sản phẩm (test item)
-2. Dùng phần còn lại để gợi ý
-3. Kiểm tra test item có trong top-K không
-4. Tính P, R, F1, AP
-5. Trung bình hóa trên tất cả user
-```
-
-### 4.3 Admin Dashboard
-
-Truy cập: `GET /admin/ai/dashboard`
-
-Hiển thị:
-- Summary metrics (Precision, Recall, F1, Hit Rate, MAP)
-- Baseline comparison (Hybrid vs CF-only vs RB-only vs Random vs Popularity)
-- Ablation study: CF/RB weights (9 cặp trọng số)
-- Ablation study: K sweep (K=1..20)
-- Precision-Recall curve
-- F1@K curve
-- Naive Bayes confusion matrix + per-class metrics
-
----
-
-## 5. Baseline & Ablation Study
-
-### 5.1 Baselines
-
-| Strategy | Mô tả | Mục đích |
-|----------|-------|----------|
-| **Random** | Gợi ý ngẫu nhiên | Floor (tệ nhất) |
-| **Popularity** | Gợi ý bán chạy nhất | Simple baseline |
-| **CF-Only** | Chỉ dùng CF | Đánh giá CF riêng |
-| **RB-Only** | Chỉ dùng Rule-based | Đánh giá RB riêng |
-| **Hybrid** | CF + RB kết hợp | Hệ thống hiện tại |
-
-### 5.2 Ablation Study: CF/RB Weights
-
-Thử 9 cặp trọng số: (0.9,0.1), (0.8,0.2), ..., (0.1,0.9)
-→ Tìm optimal weights
-
-### 5.3 Ablation Study: K Values
-
-Thử K = 1, 2, 3, 4, 5, 6, 8, 10, 15, 20
-→ Tìm optimal top-K
-
----
-
-## 6. Cài đặt và cấu hình
-
-### 6.1 Seed Data
-
-- **50 sản phẩm:** 15 Coffee + 15 Tea + 10 Smoothie + 10 Juice
-- **30 users:** 4 preference clusters (Coffee/Tea/Smoothie/Juice)
-- **~1.780 đơn hàng:** 10 tháng lịch sử, 70% preferred + 30% random, cộng một vài đơn active
-
-### 6.2 Chạy đánh giá
-
-```bash
-# Start app với seed data
-mvn spring-boot:run -Dspring-boot.run.arguments="--app.seed-data=true"
-
-# Mở dashboard
-# Login as admin → sidebar → AI Evaluation
-# Hoặc truy cập trực tiếp: /admin/ai/dashboard
-```
-
-### 6.3 API Endpoints
-
-| Endpoint | Method | Mô tả |
-|----------|--------|-------|
-| `/admin/ai/dashboard` | GET | Dashboard HTML |
-| `/admin/ai/api/evaluate` | GET | Evaluation metrics JSON |
-| `/admin/ai/api/baselines` | GET | Baseline comparison JSON |
-| `/admin/ai/api/ablation-weights` | GET | Weight sweep JSON |
-| `/admin/ai/api/ablation-k` | GET | K sweep JSON |
-| `/admin/ai/api/confusion-matrix` | GET | NB confusion matrix JSON |
-| `/admin/ai/api/pr-curve` | GET | PR curve data JSON |
-| `/admin/ai/api/f1-curve` | GET | F1@K curve data JSON |
-| `/admin/ai/api/keywords` | GET | NB category keywords JSON |
+Để chứng minh cho giảng viên thấy thuật toán có hiệu quả, nhóm sẽ chuẩn bị phần kết quả thực nghiệm trong báo cáo. 
+- **Phương pháp đo lường**: 
+  - Hệ thống tự động tạo ra một số lượng tài khoản mẫu nhất định (ví dụ 100-500 users giả lập có hành vi mua hàng cụ thể).
+  - Tiến hành ẩn đi một phần lịch sử mua hàng của họ và yêu cầu thuật toán dự đoán các món bị ẩn đó.
+- **Các chỉ số báo cáo**:
+  - So sánh độ chính xác của thuật toán gợi ý hệ thống đang dùng so với việc gợi ý ngẫu nhiên (Random).
+  - Kết quả cuối cùng sẽ cho thấy tỷ lệ gợi ý trúng đích (Precision) và tỷ lệ bao phủ (Recall) khi áp dụng thuật toán kết hợp.
