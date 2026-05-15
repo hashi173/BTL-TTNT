@@ -22,8 +22,8 @@ class EntityDisplayUtilsTest {
                 EntityDisplayUtils.resolveProductImagePath("/images/products/CaffeLatte.png"));
         assertEquals("/uploads/products/menu.png",
                 EntityDisplayUtils.resolveProductImagePath("/uploads/products/menu.png"));
-        assertEquals("https://example.com/products/cappuccino.png",
-                EntityDisplayUtils.resolveProductImagePath("https://example.com/products/cappuccino.png"));
+        assertEquals("https://loremflickr.com/640/640/cappuccino,coffee?lock=1003",
+                EntityDisplayUtils.resolveProductImagePath("https://loremflickr.com/640/640/cappuccino,coffee?lock=1003"));
     }
 
     @Test
