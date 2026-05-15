@@ -29,3 +29,6 @@ uploads/
 
 # Spring Boot config with secrets (use env vars instead)
 application-local.properties
+
+# Claude
+.claude/
