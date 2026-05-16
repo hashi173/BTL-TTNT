@@ -72,7 +72,7 @@ Hệ thống cần xem xét có nên gợi ý "Trà Vải" cho Khách A không.
 - Khách A chưa từng tự mua Trà Vải trong quá khứ -> Điểm Rule-based = **0 điểm**.
   
 👉 **Tính điểm chung cuộc:** `FinalScore = (0.6 × 0.8) + (0.4 × 0) = 0.48`.
-Hệ thống sẽ tính điểm chung cuộc cho *TẤT CẢ* đồ uống, sau đó xếp hạng từ cao xuống thấp và nhặt ra đúng 6 món điểm cao nhất đẩy ra Trang Chủ.
+Hệ thống sẽ tính điểm chung cuộc cho *TẤT CẢ* đồ uống, sau đó xếp hạng từ cao xuống thấp và nhặt ra đúng 5 món điểm cao nhất đẩy ra Trang Chủ.
 
 ---
 

@@ -55,7 +55,7 @@ public class RecommendationService {
     private static final double CF_WEIGHT = 0.6;
     private static final double RB_WEIGHT = 0.4;
     private static final int K_NEIGHBORS = 5;
-    private static final int MAX_RECOMMENDATIONS = 6;
+    private static final int MAX_RECOMMENDATIONS = 5;
     private static final long MATRIX_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
     // In-memory matrix cache

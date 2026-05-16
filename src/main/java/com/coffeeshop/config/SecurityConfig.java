@@ -29,8 +29,6 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         // Public pages
                         .requestMatchers("/", "/menu/**", "/product/**", "/products/**",
-                                "/cart/**", "/checkout/**", "/invoice/**",
-                                "/tracking", "/tracking/**",
                                 "/about", "/info",
                                 "/register", "/login", "/error").permitAll()
                         // Admin only
