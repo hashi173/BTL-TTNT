@@ -264,8 +264,8 @@
                             <!-- Categories Column -->
                             <div class="col-lg-auto">
                                 <div class="d-flex justify-content-center gap-2 flex-wrap" id="category-filters">
-                                    <button class="btn btn-outline-primary px-3 py-2 rounded-pill category-filter active"
-                                        hx-get="/products/fragment?categoryId=0" 
+                                    <button id="btn-category-all" class="btn btn-outline-primary px-3 py-2 rounded-pill category-filter active"
+                                        hx-get="/products/fragment" 
                                         hx-target="#productContainer" 
                                         hx-swap="outerHTML"
                                         hx-indicator="#menu-loader"
@@ -484,7 +484,7 @@
 
             function clearCategoryFilters() {
                 // Set "All" category as active when search bar is focused
-                const allBtn = document.querySelector('.category-filter[hx-get*="categoryId=0"]');
+                const allBtn = document.getElementById('btn-category-all');
                 if (allBtn) {
                     updateActiveFilter(allBtn);
                 }
