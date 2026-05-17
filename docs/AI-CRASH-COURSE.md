@@ -77,3 +77,54 @@ Hãy học thuộc lòng các câu hỏi - đáp mồi này, nó bao phủ 90% c
 
 **🛑 Câu 5: Hệ thống hiển thị Top Selling Items ở Admin Dashboard khác gì với Gợi ý cho người dùng không?**
 **✅ Trả lời:** *"Dạ không khác ạ. Trước đây Admin có phân theo tháng, nhưng nhóm em đã chuẩn hóa lại để cả Admin Dashboard và phần Best Seller ngoài trang chủ đều dùng chung 1 logic là **Top Selling All-Time (Bán chạy nhất lịch sử)**. Việc này đảm bảo tính nhất quán dữ liệu từ Backend ra Frontend ạ."*
+
+---
+
+## 5. Dữ liệu Seed (DataSeeder) có quy luật hay Random?
+
+Khi thầy cô hỏi: *"Dữ liệu để em test thuật toán từ đâu ra? Có phải tạo random bừa bãi không?"*
+👉 **Hãy trả lời tự tin:** *"Dữ liệu mẫu hoàn toàn **CÓ QUY LUẬT (Có chủ đích)**. Nhóm không hề random bừa bãi mà đã thiết kế dữ liệu để phục vụ riêng cho việc mô phỏng hành vi mua sắm và kiểm thử thuật toán Collaborative Filtering (Lọc cộng tác)."*
+
+Nếu bạn mở file `DataSeeder.java`, bạn sẽ thấy logic rõ ràng:
+1. **Chia cụm người dùng (Clustering):** Có tổng cộng 30 Users được chia làm 4 nhóm sở thích rõ rệt:
+   - **User 0 - 9** (Alice -> Jack): Nhóm **"Cuồng Coffee"** (chỉ số thích Cà phê cao).
+   - **User 10 - 19** (Kate -> Tina): Nhóm **"Cuồng Trà (Tea)"**.
+   - **User 20 - 24**: Nhóm **"Cuồng Smoothie"**.
+   - **User 25 - 29**: Nhóm **"Cuồng Nước ép (Juice)"**.
+2. **Quy luật mua hàng (70/30 Rule):** Trong hàm `seedCompletedOrder`, khi tạo đơn hàng giả lập, hệ thống được thiết lập tỷ lệ: **70%** khả năng user sẽ mua đúng đồ uống trong nhóm sở thích của họ, và chỉ có **30%** là mua ngẫu nhiên các món thuộc nhóm khác.
+
+**🎯 Mục đích thiết kế:** Việc tạo ra các "Cụm" (Clusters) rõ ràng như thế này giúp thuật toán tính toán độ tương đồng (**Cosine Similarity**) dễ dàng nhận diện được ai có chung gu với ai.
+- *Ví dụ:* Thuật toán sẽ tính toán và thấy Alice và Bob rất tương đồng (vì đều hay mua Coffee) và sẽ gợi ý chéo các sản phẩm Coffee cho nhau cực kỳ hiệu quả.
+
+---
+
+## 6. Hướng dẫn tính toán độ chính xác (Evaluation Metrics)
+
+Để thuyết phục những giảng viên khó tính nhất, nhóm áp dụng phương pháp **Hold-out Validation** (Giấu một phần dữ liệu để test). Dưới đây là cách tính tay và diễn giải công thức để bạn dễ dàng đưa vào báo cáo hoặc Slide:
+
+### Bước 1: Chia tập dữ liệu (Train / Test Split)
+- Giả sử 1 User (ví dụ: **Alice**) đã mua tổng cộng **10 món** đồ uống khác nhau trong quá khứ.
+- Bạn sẽ lấy **8 món (80%)** cho thuật toán học (Train data) - Coi như Alice chỉ mới mua 8 món này.
+- Bạn ẩn/giấu đi **2 món (20%)** còn lại (Test data) - Coi đây là "Đáp án" (Ground Truth) mà thuật toán cần phải đoán trúng.
+
+### Bước 2: Yêu cầu thuật toán dự đoán
+- Dựa vào 8 món đã học, yêu cầu thuật toán gợi ý ra **Top 5** món mà Alice có khả năng mua nhất (vì code của bạn đang đặt cấu hình `MAX_RECOMMENDATIONS = 5`).
+
+### Bước 3: Tính toán 2 chỉ số (Ví dụ tính tay cụ thể)
+Giả sử trong Top 5 món thuật toán gợi ý ra, có **1 món trùng** với 2 món bạn đã "giấu" đi.
+
+1. **Precision (Độ chính xác - Tỷ lệ đoán trúng):**
+   - *Ý nghĩa:* Trong 5 món máy gợi ý, có bao nhiêu món thực sự user muốn mua?
+   - *Công thức:*
+     $$\text{Precision} = \frac{\text{Số món đoán trúng}}{\text{Tổng số món máy gợi ý}}$$
+   - *Ví dụ:* $\frac{1}{5} = 20\%$.
+2. **Recall (Độ bao phủ):**
+   - *Ý nghĩa:* Trong tổng số những món user thực sự thích (món bị giấu), máy tìm ra được bao nhiêu %?
+   - *Công thức:*
+     $$\text{Recall} = \frac{\text{Số món đoán trúng}}{\text{Tổng số món bị giấu (Đáp án)}}$$
+   - *Ví dụ:* $\frac{1}{2} = 50\%$.
+
+### Bước 4: So sánh với Baseline (Gợi ý ngẫu nhiên)
+- Nếu không có AI, chọn ngẫu nhiên 5 món từ menu 50 món. Xác suất trúng ngẫu nhiên 1 món cụ thể chỉ khoảng $\frac{5}{50} = 10\%$.
+- **Kết luận cho Slide báo cáo:** Nhờ áp dụng AI (Collaborative Filtering), tỷ lệ gợi ý trúng đích (Precision) của hệ thống đạt **X%** (thường là 30-40% đối với CF), cao gấp **Y lần** so với việc gợi ý ngẫu nhiên thông thường, từ đó giúp tăng tỷ lệ chuyển đổi đơn hàng và tăng doanh thu hiệu quả cho quán.
+
