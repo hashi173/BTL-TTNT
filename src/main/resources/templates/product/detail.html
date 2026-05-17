@@ -13,7 +13,7 @@
                 <div class="col-lg-4 d-flex justify-content-center align-items-start">
                     <div class="rounded-4 overflow-hidden shadow-lg position-relative" style="height: 180px; width: 180px;">
                         <img th:src="${product.resolvedImagePath}"
-                            class="w-100 h-100" style="object-fit: cover;" th:alt="${product.name}"
+                            class="w-100 h-100" style="object-fit: contain; background-color: #f8f9fa;" th:alt="${product.name}"
                             onerror="this.src='/images/no-image.png'">
                     </div>
                 </div>
