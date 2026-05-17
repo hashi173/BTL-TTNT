@@ -134,7 +134,10 @@ public class RecommendationService {
     public List<Product> getBestSellers() {
         List<Object[]> totals = orderItemRepository.findProductPurchaseTotals();
         if (totals.isEmpty()) {
-            return productRepository.findAllWithDetails();
+            return productRepository.findAllWithDetails().stream()
+                    .filter(Product::isAvailable)
+                    .limit(MAX_RECOMMENDATIONS)
+                    .collect(Collectors.toList());
         }
 
         List<UUID> topProductIds = totals.stream()
